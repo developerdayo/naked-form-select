@@ -7,14 +7,6 @@ const pump = require('pump');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
 
-function copyTask(done) {
-  return gulp.src([
-      './node_modules/javascript-autocomplete/auto-complete.min.js',
-      './node_modules/javascript-autocomplete/auto-complete.min.js'
-  ],  {base: './node_modules'})
-  .pipe(gulp.dest('public/vendors'));
-}
-
 function sassTask(done) {
     const sassOptions = {
         errLogToConsole: true,
@@ -24,35 +16,34 @@ function sassTask(done) {
         autoprefixer()
     ];
 
-    return gulp.src('src/styled-form-select.scss')
+    return gulp.src('src/naked-form-select.scss')
         .pipe(sass(sassOptions).on('error', sass.logError))
         .pipe(sourcemaps.init())
         .pipe(sourcemaps.write())
-        .pipe(gulp.dest('public/css'))
+        .pipe(gulp.dest('compiled/css'))
 }
 
 function babelTask() {
-  return gulp.src('src/styled-form-select.js')
+  return gulp.src('src/naked-form-select.js')
   .pipe(babel())
-  .pipe(gulp.dest('public/js'));
+  .pipe(gulp.dest('compiled/js'));
 }
 
 function uglifyTask() {
-  return gulp.src('src/styled-form-select.js')
+  return gulp.src('src/naked-form-select.js')
   .pipe(babel({
       presets: ['@babel/preset-env']
   }))
   .pipe(uglify())
-  .pipe(gulp.dest('public/js'));
+  .pipe(gulp.dest('compiled/js'));
 }
 
 function watchTask() {
     "use strict";
-    gulp.watch('src/styled-form-select.scss', sassTask);
-    gulp.watch('src/styled-form-select.js', babelTask);
+    gulp.watch('src/naked-form-select.scss', sassTask);
+    gulp.watch('src/naked-form-select.js', babelTask);
 }
 
-gulp.task('copy', copyTask); // copy dependency files into theme folder
 gulp.task('sass', sassTask); // dev css; includes sourcemap
 gulp.task('babel', babelTask);
 gulp.task('uglify', uglifyTask);

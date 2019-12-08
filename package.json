@@ -4,12 +4,12 @@
   "dependencies": {
     "@babel/polyfill": "^7.4.3",
     "gulp-concat": "^2.6.1",
-    "javascript-autocomplete": "^1.0.3",
     "autoprefixer": "^9.6.1",
     "gulp-uglify": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
     "glob": "^7.1.2",
     "gulp": "4.0",
     "gulp-babel": "^8.0.0-beta.2",
