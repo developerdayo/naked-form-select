@@ -1,25 +1,21 @@
 {
-  "name": "styled-form-select",
+  "name": "naked-form-select",
   "version": "1.0.0",
-  "dependencies": {
-    "@babel/polyfill": "^7.4.3",
-    "gulp-concat": "^2.6.1",
-    "autoprefixer": "^9.6.1",
-    "gulp-uglify": "^3.0.0"
+  "description": "Completely basic styled form selects to give developers the freedom to customize form selects for their projects",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {
-    "@babel/core": "^7.4.3",
-    "@babel/preset-env": "^7.4.3",
-    "glob": "^7.1.2",
-    "gulp": "4.0",
-    "gulp-babel": "^8.0.0-beta.2",
-    "gulp-sass": "^3.1.0",
-    "gulp-sourcemaps": "^2.6.1",
-    "pump": "^1.0.2"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/developerdayo/naked-form-select.git"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "ie >= 11"
-  ]
+  "author": "sarah ferguson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/developerdayo/naked-form-select/issues"
+  },
+  "homepage": "https://github.com/developerdayo/naked-form-select#readme"
 }
