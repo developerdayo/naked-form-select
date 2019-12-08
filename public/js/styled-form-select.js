@@ -1,11 +1,27 @@
 function nakedFormSelect(target = 'select', userOptions = {
-  typeAhead: false
+  keywordSearch: {
+    on: false,
+    placeholder: undefined
+  }
 }) {
   if (document.querySelector(target)) {
     const $targetSelector = target;
     const targetSelectorID = `[data-naked-select-id='${$targetSelector}']`;
-    let options = userOptions;
     const build = {
+      keywordSearchInput: function () {
+        let $searchContainer = document.createElement('div');
+        $searchContainer.classList.add('keyword-search-wrap');
+        let $input = document.createElement('input');
+
+        if (userOptions.keywordSearch.placeholder !== undefined) {
+          $input.setAttribute('placeholder', userOptions.keywordSearch.placeholder);
+        }
+
+        let $btn = document.createElement('button');
+        $searchContainer.appendChild($input);
+        $searchContainer.appendChild($btn);
+        return $searchContainer;
+      },
       lists: function () {
         document.querySelectorAll($targetSelector).forEach(function (selectElement, index) {
           // get an array of the options
@@ -44,7 +60,12 @@ function nakedFormSelect(target = 'select', userOptions = {
           $container.appendChild($btnToggle);
           $container.appendChild($listContainer);
           selectElement.parentNode.insertBefore($container, selectElement);
-          $container.appendChild(selectElement);
+          $container.appendChild(selectElement); // add predict search markup if this option is turned on
+
+          if (userOptions.keywordSearch.on === true) {
+            let $searchContainer = build.keywordSearchInput();
+            $list.insertAdjacentElement('beforebegin', $searchContainer);
+          }
         });
       },
       currentState: function () {
@@ -71,16 +92,32 @@ function nakedFormSelect(target = 'select', userOptions = {
       }
     };
     const interactive = {
+      globalClose: function () {
+        // close all dropdowns when clicked outside of select
+        document.querySelector('body').addEventListener('click', function (element) {
+          document.querySelectorAll(`[data-naked-select]`).forEach((select, index) => {
+            if (select.classList.contains('open') && !element.target.classList.contains('options-wrap') && !element.target.classList.contains('toggle-dropdown') && element.target.parentNode.getAttribute('data-naked-select-list') === null && !element.target.parentNode.classList.contains('keyword-search-wrap')) {
+              document.querySelectorAll(`[data-naked-select]`).forEach(select => {
+                select.classList.remove('open');
+              });
+              document.querySelectorAll(`[data-naked-select] .options-wrap`).forEach(listContainer => {
+                listContainer.style.height = '0';
+              });
+            }
+          });
+        });
+      },
       toggle: function () {
         document.querySelectorAll(`${targetSelectorID}[data-naked-select] .toggle-dropdown`).forEach(function (btnElement, index) {
           let $selectContainer = document.querySelector(`${targetSelectorID}[data-naked-select='${index}']`);
           let $listContainer = document.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .options-wrap`); // get list container's initial height to create slide toggle effect with css' help
 
-          let listHeight = $listContainer.scrollHeight;
           $listContainer.style.height = '0'; // the slide toggle click event
 
           let $btnToggle = btnElement;
           $btnToggle.addEventListener('click', () => {
+            let listHeight = $listContainer.scrollHeight;
+
             if ($selectContainer.classList.contains('open')) {
               $selectContainer.classList.remove('open');
               $listContainer.style.height = '0';
@@ -88,18 +125,8 @@ function nakedFormSelect(target = 'select', userOptions = {
               $selectContainer.classList.add('open');
               $listContainer.style.height = listHeight;
             }
-          }); // close all dropdowns when clicked outside of select
-
-          document.querySelector('body').addEventListener('click', function (element) {
-            if (document.querySelector(`[data-naked-select='${index}']`).classList.contains('open') && !element.target.classList.contains('options-wrap') && !element.target.classList.contains('toggle-dropdown') && element.target.parentNode.getAttribute('data-naked-select-list') === null) {
-              document.querySelectorAll(`[data-naked-select='${index}']`).forEach(select => {
-                select.classList.remove('open');
-              });
-              document.querySelectorAll(`[data-naked-select='${index}'] .options-wrap`).forEach(listContainer => {
-                listContainer.style.height = '0';
-              });
-            }
           });
+          interactive.globalClose();
         });
       },
       select: function () {
@@ -154,19 +181,60 @@ function nakedFormSelect(target = 'select', userOptions = {
             }
           });
         });
+      },
+      keywordSearch: function () {
+        if (userOptions.keywordSearch.on === true) {
+          document.querySelectorAll($targetSelector).forEach(function (selectElement, index) {
+            // get an array of the options
+            let optionsTextArr = [];
+            let options = Array.from(selectElement.childNodes).filter(option => option.nodeName === 'OPTION');
+            options.forEach(option => {
+              optionsTextArr.push(option.outerText);
+            }); // create event to compare the entered value and filter the array of select options by matching substring
+
+            let $input = selectElement.previousElementSibling.childNodes[0].childNodes[0];
+            let $list = selectElement.previousElementSibling.childNodes[1];
+            $input.addEventListener('input', e => {
+              $list.innerHTML = '';
+              let enteredValue = e.target.value.toLowerCase();
+              let filteredResultsArr = optionsTextArr.filter(function (option) {
+                let lowercase = option.toLowerCase();
+
+                if (lowercase.match(enteredValue)) {
+                  return option;
+                }
+              });
+              filteredResultsArr.forEach((item, index) => {
+                let $listItem = document.createElement('li');
+                $listItem.setAttribute('data-index', index);
+                $listItem.appendChild(document.createTextNode(item));
+                $list.appendChild($listItem);
+              });
+              interactive.select(); // update options-wrap height
+
+              let listHeight = $list.offsetHeight;
+              let keywordSearchHeight = document.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .keyword-search-wrap`).offsetHeight;
+              document.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .options-wrap`).style.height = listHeight + keywordSearchHeight;
+            });
+          });
+        }
       }
     };
     build.lists();
     build.currentState();
     interactive.toggle();
     interactive.select();
+    interactive.keywordSearch();
   }
 }
 
 function ready() {
   nakedFormSelect('select.normal');
-  nakedFormSelect('select.typeahead', {
-    typeAhead: true
+  nakedFormSelect('select.keyword-search', {
+    keywordSearch: {
+      on: true,
+      placeholder: 'Enter keyword'
+    }
   });
 }
 
