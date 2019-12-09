@@ -1,3 +1,7 @@
+/* Naked Form Select v1.0.1 (https://github.com/developerdayo/naked-form-select)
+ * Copyright 2019-2020 Sarah Ferguson
+ * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
+
 function nakedFormSelect(target = 'select', userOptions = { keywordSearch: { on: false, placeholder: undefined } }) {
   if (document.querySelector(target)) {
     const $targetSelector = target;
