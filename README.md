@@ -2,16 +2,16 @@
 Use this package to style form selects that adds minimal markup and requires minimal css. Naked Form Select supports single and multi-select as well as has an option to turn on keyword search. It is written in Javascript and requires no other dependencies.
 
 ## Demo
-I've provided a simple demo in the `demo` folder.
+I've provided a simple demo in the [demo folder](https://github.com/developerdayo/naked-form-select/tree/master/demo).
 
 ## Quick start
 • Install with npm: `npm install naked-form-select`
 
 ## Support
 "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "ie >= 11"
+&nbsp;&nbsp;&nbsp;&nbsp;"> 1%",
+&nbsp;&nbsp;&nbsp;&nbsp;"last 2 versions",
+&nbsp;&nbsp;&nbsp;&nbsp;"ie >= 11"
 ]
 
 ## Usage
@@ -34,3 +34,8 @@ Enable keyword search for your select by the following example:
     }
   });
 ```
+
+## Copyright and license
+Copyright (C) 2019-2020 [Sarah Ferguson](https://github.com/developerdayo).
+
+Licensed under [the MIT license](LICENSE).
