@@ -8,10 +8,10 @@ I've provided a simple demo in the [demo folder](https://github.com/developerday
 • Install with npm: `npm install naked-form-select`
 
 ## Support
-"browserslist": [
-&nbsp;&nbsp;&nbsp;&nbsp;"> 1%",
-&nbsp;&nbsp;&nbsp;&nbsp;"last 2 versions",
-&nbsp;&nbsp;&nbsp;&nbsp;"ie >= 11"
+"browserslist": [<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"> 1%",<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"last 2 versions",<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"ie >= 11"<br />
 ]
 
 ## Usage
