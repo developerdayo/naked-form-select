@@ -14,31 +14,35 @@
 <body>
     <h1>Styled Form Select</h1>
     <h2>Single Select</h2>
-    <select class="normal">
-        <option>Make a selection from Option 1</option>
-        <option>Option1 : 1</option>
-        <option>Option1 : 2</option>
-        <option>Option1 : 3</option>
-        <option>Option1 : 4</option>
-        <option>Option1 : 5</option>
-    </select>
-    <h2>Multiple Select</h2>
-    <select class="normal" multiple>
-        <option>Make a selection from Option 2</option>
-        <option>Option2 : 1</option>
-        <option>Option2 : 2</option>
-        <option>Option2 : 3</option>
-        <option>Option2 : 4</option>
-        <option>Option2 : 5</option>
-    </select>
-    <h2>Select with predictive search</h2>
-    <select class="keyword-search">
-        <option>Make a selection from Option 3</option>
-        <option>Option3 : 1</option>
-        <option>Option3 : 2</option>
-        <option>Option3 : 3</option>
-        <option>Option3 : 4</option>
-        <option>Option3 : 5</option>
-    </select>
+    <form id="testForm">
+        <select class="normal" name="select1">
+            <option value="none">Make a selection from Option 1</option>
+            <option value="option1:1">Option1 : 1</option>
+            <option value="option1:2">Option1 : 2</option>
+            <option value="option1:3">Option1 : 3</option>
+            <option value="option1:4">Option1 : 4</option>
+            <option value="option1:5">Option1 : 5</option>
+        </select>
+        <h2>Multiple Select</h2>
+        <select class="normal" name="select2" multiple>
+            <option value="none">Make a selection from Option 2</option>
+            <option value="option2:1">Option2 : 1</option>
+            <option value="option2:2">Option2 : 2</option>
+            <option value="option2:3">Option2 : 3</option>
+            <option value="option2:4">Option2 : 4</option>
+            <option value="option2:5">Option2 : 5</option>
+        </select>
+        <h2>Select with predictive search</h2>
+        <select class="keyword-search" name="select3">
+            <option value="none">Make a selection from Option 3</option>
+            <option value="option3:1">Option3 : 1</option>
+            <option value="option3:2">Option3 : 2</option>
+            <option value="option3:3">Option3 : 3</option>
+            <option value="option3:4">Option3 : 4</option>
+            <option value="option3:5">Option3 : 5</option>
+        </select>
+        <button type="submit" id="submitForm">Submit Form</button>
+    </form>
+    <div id="formResults"></div>
 </body>
 </html>

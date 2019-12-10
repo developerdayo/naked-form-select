@@ -1,3 +1,1 @@
-.naked-form-select-wrap select{display:none}.naked-form-select-wrap .options-wrap{transition:all 255ms ease-in-out;overflow:hidden}.naked-form-select-wrap .options-wrap ul{list-style:none;margin:0;padding:0}
-
-/*# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiIiwic291cmNlcyI6WyJuYWtlZC1mb3JtLXNlbGVjdC5jc3MiXSwic291cmNlc0NvbnRlbnQiOlsiLm5ha2VkLWZvcm0tc2VsZWN0LXdyYXAgc2VsZWN0e2Rpc3BsYXk6bm9uZX0ubmFrZWQtZm9ybS1zZWxlY3Qtd3JhcCAub3B0aW9ucy13cmFwe3RyYW5zaXRpb246YWxsIDI1NW1zIGVhc2UtaW4tb3V0O292ZXJmbG93OmhpZGRlbn0ubmFrZWQtZm9ybS1zZWxlY3Qtd3JhcCAub3B0aW9ucy13cmFwIHVse2xpc3Qtc3R5bGU6bm9uZTttYXJnaW46MDtwYWRkaW5nOjB9XG4iXSwiZmlsZSI6Im5ha2VkLWZvcm0tc2VsZWN0LmNzcyJ9 */
+.naked-form-select-wrap select{display:none}.naked-form-select-wrap .options-wrap{transition:height 255ms ease-in-out;overflow:hidden}.naked-form-select-wrap .options-wrap ul{list-style:none;margin:0;padding:0}

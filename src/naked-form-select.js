@@ -2,7 +2,7 @@
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
 
-function nakedFormSelect(target = 'select', userOptions = { keywordSearch: { on: false, placeholder: undefined } }) {
+ function nakedFormSelect(target = 'select', userOptions = { keywordSearch: { on: false, placeholder: undefined } }) {
   if (document.querySelector(target)) {
     const $targetSelector = target;
     const targetSelectorID = `[data-naked-select-id='${$targetSelector}']`;
@@ -37,9 +37,10 @@ function nakedFormSelect(target = 'select', userOptions = { keywordSearch: { on:
           // create placeholder text
 
           let placeholderText = options[0].outerText;
-          let $placeholderContainer = document.createElement('span');
+          let $placeholderContainer = document.createElement('button');
 
-          $placeholderContainer.classList.add('placeholder');
+          $placeholderContainer.classList.add('toggle-dropdown');
+          $placeholderContainer.setAttribute('aria-label', 'Click to expand options');
           $placeholderContainer.appendChild(document.createTextNode(placeholderText));
 
           // create unordered list with the options text
@@ -68,12 +69,7 @@ function nakedFormSelect(target = 'select', userOptions = { keywordSearch: { on:
           $container.setAttribute('data-naked-select', index);
           $container.setAttribute('data-naked-select-id', $targetSelector);
 
-          let $btnToggle = document.createElement('button');
-          $btnToggle.classList.add('toggle-dropdown');
-          $btnToggle.appendChild(document.createTextNode('Open to Select Options'));
-
           $container.appendChild($placeholderContainer);
-          $container.appendChild($btnToggle);
           $container.appendChild($listContainer);
 
 
@@ -94,7 +90,7 @@ function nakedFormSelect(target = 'select', userOptions = { keywordSearch: { on:
       currentState: function() {
         document.querySelectorAll(`${targetSelectorID}[data-naked-select] select`).forEach((select, index) => {
 
-          let $placeholderContainer = document.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .placeholder`);
+          let $placeholderContainer = document.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .toggle-dropdown`);
 
           if (select.multiple) {
             // update placeholder text for multiple select
@@ -144,16 +140,17 @@ function nakedFormSelect(target = 'select', userOptions = { keywordSearch: { on:
           $listContainer.style.height = '0';
 
           // the slide toggle click event
-          let $btnToggle = btnElement;
+          btnElement.addEventListener('click', (event) => {
+            event.preventDefault();
 
-          $btnToggle.addEventListener('click', () => {
             let listHeight = $listContainer.scrollHeight;
+
             if ($selectContainer.classList.contains('open')) {
               $selectContainer.classList.remove('open');
               $listContainer.style.height = '0';
             } else {
               $selectContainer.classList.add('open');
-              $listContainer.style.height = listHeight;
+              $listContainer.style.height = `${listHeight}px`;
             }
           })
 
@@ -176,7 +173,7 @@ function nakedFormSelect(target = 'select', userOptions = { keywordSearch: { on:
             $select[0].value = listItemValue;
             $select.options[parseInt(listItemIndex)].selected = true;
 
-            let $placeholderContainer = document.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] .placeholder`);
+            let $placeholderContainer = document.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] .toggle-dropdown`);
 
             // handle multiple select
             if ($select.multiple) {
@@ -187,6 +184,7 @@ function nakedFormSelect(target = 'select', userOptions = { keywordSearch: { on:
                 $select.options[parseInt(listItemIndex)].selected = false;
               } else {
                 listItem.classList.add('selected');
+                $select.options[parseInt(listItemIndex)].selected = true;
               }
 
               // update placeholder text
@@ -196,6 +194,11 @@ function nakedFormSelect(target = 'select', userOptions = { keywordSearch: { on:
               selectedOptionsArr.forEach((option) => { placeholderArr.push(option.innerText) });
 
               $placeholderContainer.textContent = placeholderArr.join(', ');
+
+              // if there is nothing selected, set it to the first option
+              if ($select.options.selectedIndex === -1) {
+                $placeholderContainer.textContent = $select.options[0].outerText;
+              }
 
             } else {
 
