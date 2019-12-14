@@ -1,27 +1,40 @@
-/* Naked Form Select v1.0.1 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.0.6 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
 
- function nakedFormSelect(target = 'select', userOptions = { keywordSearch: { on: false, placeholder: undefined } }) {
+ function nakedFormSelect(target = 'select', { keywordSearch = { on: false, placeholder: undefined } } = {}) {
   if (document.querySelector(target)) {
+
     const $targetSelector = target;
     const targetSelectorID = `[data-naked-select-id='${$targetSelector}']`;
 
     const build = {
+      index: function() {
+        if (keywordSearch.on === false) {
+          setIndex();
+        } else {
+          setTimeout(() => {
+            setIndex();
+          }, 1);
+        }
+
+        function setIndex() {
+          document.querySelectorAll('[data-naked-select-id]').forEach(($nakedContainer, index) => {
+            $nakedContainer.setAttribute('data-index', index);
+          })
+        }
+      },
       keywordSearchInput: function() {
         let $searchContainer = document.createElement('div');
         $searchContainer.classList.add('keyword-search-wrap');
 
         let $input = document.createElement('input');
 
-        if (userOptions.keywordSearch.placeholder !== undefined) {
-          $input.setAttribute('placeholder', userOptions.keywordSearch.placeholder);
+        if (keywordSearch.placeholder !== undefined) {
+          $input.setAttribute('placeholder', keywordSearch.placeholder);
         }
 
-        let $btn = document.createElement('button');
-
         $searchContainer.appendChild($input);
-        $searchContainer.appendChild($btn);
 
         return $searchContainer;
       },
@@ -66,8 +79,8 @@
           // create and add the entirely new markup that will be styled containing select options
           let $container = document.createElement('div');
           $container.classList.add('naked-form-select-wrap');
-          $container.setAttribute('data-naked-select', index);
           $container.setAttribute('data-naked-select-id', $targetSelector);
+          $container.setAttribute('data-naked-select', index);
 
           $container.appendChild($placeholderContainer);
           $container.appendChild($listContainer);
@@ -78,14 +91,14 @@
 
 
           // add predict search markup if this option is turned on
-          if (userOptions.keywordSearch.on === true) {
+          if (keywordSearch.on === true) {
 
             let $searchContainer = build.keywordSearchInput();
 
             $list.insertAdjacentElement('beforebegin', $searchContainer);
 
           }
-        })
+        }, build.index())
       },
       currentState: function() {
         document.querySelectorAll(`${targetSelectorID}[data-naked-select] select`).forEach((select, index) => {
@@ -118,16 +131,19 @@
       globalClose: function() {
         // close all dropdowns when clicked outside of select
         document.querySelector('body').addEventListener('click', function(element) {
-          document.querySelectorAll(`[data-naked-select]`).forEach((select, index) => {
-            if (select.classList.contains('open') && !element.target.classList.contains('options-wrap') && !element.target.classList.contains('toggle-dropdown') && element.target.parentNode.getAttribute('data-naked-select-list') === null && !element.target.parentNode.classList.contains('keyword-search-wrap')) {
-              document.querySelectorAll(`[data-naked-select]`).forEach((select) => {
-                select.classList.remove('open');
-              })
-              document.querySelectorAll(`[data-naked-select] .options-wrap`).forEach((listContainer) => {
-                listContainer.style.height = '0';
-              })
+
+          let selectArr = Array.from(document.querySelectorAll('[data-naked-select]'));
+
+          for (let i = 0; i < selectArr.length; i++) {
+            if (selectArr[i].classList.contains('open') && !selectArr[i].contains(element.target)) {
+
+              let openSelectDataID = parseInt(selectArr[i].getAttribute('data-index'));
+
+              selectArr[i].classList.remove('open');
+              document.querySelector(`[data-naked-select][data-index='${openSelectDataID}'] .options-wrap`).style.height = '0';
+
             }
-          })
+          }
         })
       },
       toggle: function() {
@@ -153,15 +169,14 @@
               $listContainer.style.height = `${listHeight}px`;
             }
           })
-
-          interactive.globalClose();
-        })
+        }, interactive.globalClose())
       },
       select: function() {
 
         let listValueArr = []
 
         document.querySelectorAll(`${targetSelectorID}[data-naked-select] li`).forEach((listItem, index) => {
+
           listItem.addEventListener('click', () => {
 
             let listItemIndex = listItem.getAttribute('data-index');
@@ -169,8 +184,9 @@
             let selectContainerIndex = listItem.parentNode.getAttribute('data-naked-select-list');
             let $select = document.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] select`);
 
+            let listHeight = document.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] .options-wrap`).scrollHeight;
+
             // update the select value
-            $select[0].value = listItemValue;
             $select.options[parseInt(listItemIndex)].selected = true;
 
             let $placeholderContainer = document.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] .toggle-dropdown`);
@@ -211,7 +227,7 @@
                 $listContainer.style.height = '0';
               } else {
                 $selectContainer.classList.add('open');
-                $listContainer.style.height = listHeight;
+                $listContainer.style.height = `${listHeight}px`;
               }
 
               // toggle selected class
@@ -225,7 +241,11 @@
         })
       },
       keywordSearch: function() {
-        if (userOptions.keywordSearch.on === true) {
+        if (keywordSearch.on === true) {
+
+          document.querySelectorAll(targetSelectorID).forEach(($container) => {
+            $container.setAttribute('keywordSearch', 'on');
+          })
 
           document.querySelectorAll($targetSelector).forEach(function(selectElement, index) {
 
@@ -239,35 +259,41 @@
             let $input = selectElement.previousElementSibling.childNodes[0].childNodes[0];
             let $list = selectElement.previousElementSibling.childNodes[1];
 
+            // show all list items initially
+            let $listItem = document.querySelectorAll(`[data-naked-select-id='${$targetSelector}'] .options-wrap li`);
+
+            $listItem.forEach(($li) => { $li.classList.add('match') })
+
             $input.addEventListener('input', (e) => {
 
-              $list.innerHTML = '';
               let enteredValue = e.target.value.toLowerCase();
 
-              let filteredResultsArr = optionsTextArr.filter(function(option) {
-                let lowercase = option.toLowerCase();
+              let filteredResultsArr = options.filter(function(option) {
+                let lowercase = option.outerText.toLowerCase();
                 if (lowercase.match(enteredValue)) {
                     return option;
                 }
               })
 
-              filteredResultsArr.forEach((item, index) => {
-
-                let $listItem = document.createElement('li')
-
-                $listItem.setAttribute('data-index', index)
-                $listItem.appendChild(document.createTextNode(item))
-                $list.appendChild($listItem);
-
+              $listItem.forEach(($li) => {
+                $li.classList.remove('match');
               })
 
-              interactive.select();
+              filteredResultsArr.forEach((option) => {
+                $listItem.forEach(($li) => {
+                  let dataIndex = parseInt($li.getAttribute('data-index'));
+
+                  if (dataIndex === option.index) {
+                    $li.classList.add('match');
+                  }
+                })
+              })
 
               // update options-wrap height
               let listHeight = $list.offsetHeight;
               let keywordSearchHeight = document.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .keyword-search-wrap`).offsetHeight;
 
-              document.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .options-wrap`).style.height = listHeight + keywordSearchHeight;
+              document.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .options-wrap`).style.height = listHeight + keywordSearchHeight + 'px';
             })
           })
         }
