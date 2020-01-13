@@ -1,9 +1,8 @@
 function ready() {
-  nakedFormSelect('select.normal');
-  nakedFormSelect('select.keyword-search', {
+  nakedFormSelect('select:not([multiple])');
+  nakedFormSelect('select[multiple]', {
     keywordSearch: {
       on: true,
-      placeholder: 'Enter keyword'
     }
   });
   function postResults() {
@@ -32,6 +31,16 @@ function ready() {
         $formResults.appendChild($container);
       })
 
+    })
+    document.querySelectorAll('select').forEach(($select, i) => {
+      let $changeContainer = document.createElement('div');
+      $changeContainer.classList.add('changed');
+
+      $select.addEventListener('change', event => {
+        $formResults.appendChild($changeContainer);
+
+        $changeContainer.appendChild(document.createTextNode(`select ${i + 1} changed!`));
+      })
     })
   }
   postResults();

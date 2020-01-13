@@ -14,6 +14,9 @@ I've provided a simple demo in the [demo folder](https://github.com/developerday
 &nbsp;&nbsp;&nbsp;&nbsp;"ie >= 11"<br />
 ]
 
+### For IE11 Support
+Include the files in the [dist/js/ie11-polyfills](https://github.com/developerdayo/naked-form-select/tree/master/dist/js/ie11-polyfills) as this plugin uses forEach and Array.from.
+
 ## Usage
 ### Initialize
 Initialize by passing in your selector. For example: `nakedFormSelect('select')`

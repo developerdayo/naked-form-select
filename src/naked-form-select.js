@@ -1,4 +1,4 @@
-/* Naked Form Select v1.0.6 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.0.7 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
 
@@ -10,13 +10,9 @@
 
     const build = {
       index: function() {
-        if (keywordSearch.on === false) {
+        setTimeout(() => {
           setIndex();
-        } else {
-          setTimeout(() => {
-            setIndex();
-          }, 1);
-        }
+        }, 1);
 
         function setIndex() {
           document.querySelectorAll('[data-naked-select-id]').forEach(($nakedContainer, index) => {
@@ -128,6 +124,13 @@
       }
     }
     const interactive = {
+      triggerEvent: function(el, type) {
+        if ('createEvent' in document) {
+          var e = document.createEvent('HTMLEvents');
+          e.initEvent(type, false, true);
+          el.dispatchEvent(e);
+        }
+      },
       globalClose: function() {
         // close all dropdowns when clicked outside of select
         document.querySelector('body').addEventListener('click', function(element) {
@@ -188,6 +191,8 @@
 
             // update the select value
             $select.options[parseInt(listItemIndex)].selected = true;
+
+            interactive.triggerEvent($select, 'change');
 
             let $placeholderContainer = document.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] .toggle-dropdown`);
 
