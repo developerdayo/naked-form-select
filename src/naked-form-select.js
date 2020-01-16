@@ -1,4 +1,4 @@
-/* Naked Form Select v1.0.7 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.0.8 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
 
@@ -41,16 +41,17 @@
           let options = Array.from(selectElement.childNodes).filter(option => option.nodeName === 'OPTION');
           let optionsTextArr = [];
 
-          options.forEach((option) => {optionsTextArr.push(option.outerText)});
+          options.forEach((option) => {optionsTextArr.push(option.textContent)});
 
           // create placeholder text
 
-          let placeholderText = options[0].outerText;
+          let placeholderText = options[0].textContent;
           let $placeholderContainer = document.createElement('button');
+
 
           $placeholderContainer.classList.add('toggle-dropdown');
           $placeholderContainer.setAttribute('aria-label', 'Click to expand options');
-          $placeholderContainer.appendChild(document.createTextNode(placeholderText));
+          $placeholderContainer.textContent = placeholderText;
 
           // create unordered list with the options text
           let $listContainer = document.createElement('div');
@@ -79,6 +80,7 @@
           $container.setAttribute('data-naked-select', index);
 
           $container.appendChild($placeholderContainer);
+
           $container.appendChild($listContainer);
 
 
@@ -111,13 +113,13 @@
 
             // if there is nothing selected, set it to the first option
             if (select.options.selectedIndex === -1) {
-                $placeholderContainer.textContent = select.options[0].outerText;
+                $placeholderContainer.textContent = select.options[0].textContent;
             }
           } else {
 
             let selectedIndex = select.options.selectedIndex;
 
-            $placeholderContainer.textContent = select.options[selectedIndex].outerText;
+            $placeholderContainer.textContent = select.options[selectedIndex].textContent;
 
           }
         })
@@ -218,7 +220,7 @@
 
               // if there is nothing selected, set it to the first option
               if ($select.options.selectedIndex === -1) {
-                $placeholderContainer.textContent = $select.options[0].outerText;
+                $placeholderContainer.textContent = $select.options[0].textContent;
               }
 
             } else {
@@ -258,7 +260,7 @@
             let optionsTextArr = [];
             let options = Array.from(selectElement.childNodes).filter(option => option.nodeName === 'OPTION');
 
-            options.forEach((option) => {optionsTextArr.push(option.outerText)});
+            options.forEach((option) => {optionsTextArr.push(option.textContent)});
 
             // create event to compare the entered value and filter the array of select options by matching substring
             let $input = selectElement.previousElementSibling.childNodes[0].childNodes[0];
@@ -274,7 +276,7 @@
               let enteredValue = e.target.value.toLowerCase();
 
               let filteredResultsArr = options.filter(function(option) {
-                let lowercase = option.outerText.toLowerCase();
+                let lowercase = option.textContent.toLowerCase();
                 if (lowercase.match(enteredValue)) {
                     return option;
                 }
