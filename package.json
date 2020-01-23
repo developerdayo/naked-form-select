@@ -1,6 +1,6 @@
 {
   "name": "naked-form-select",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Completely basic styled form selects to give developers the freedom to customize form selects for their projects",
   "main": "index.js",
   "dependencies": {},

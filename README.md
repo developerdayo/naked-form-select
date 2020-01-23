@@ -38,6 +38,36 @@ Enable keyword search for your select by the following example:
   });
 ```
 
+### Context Option
+Query target select elements within a certain context. This option accepts both a value and a boolean property to query document. For instance, reference
+Example #4 in the demo.html file. If you want to initialize select elements with a class of .example-4 within a containing element with a class of .section-with-context, you would do so like this:
+```
+nakedFormSelect('.example-4', {
+  context: {
+    value: '.section-with-context',
+    queryDocument: true
+  }
+});
+```
+This essentially accomplishes what the context parameter in jQuery selectors does.
+
+I specifically created the 'queryDocument' option for the Drupal projects I work on to take advantage of the context variable paired with Drupal Behaviors.
+So, if this option is turned on (default is 'false'), context.value will be queried intead of document.
+
+### Default Settings
+```
+{
+  context = {
+    value: undefined,
+    queryDocument: false
+  },
+  keywordSearch = {
+    on: false,
+    placeholder: undefined
+  }
+}
+```
+
 ## Copyright and license
 Copyright (C) 2019-2020 [Sarah Ferguson](https://github.com/developerdayo).
 
