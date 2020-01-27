@@ -1,6 +1,9 @@
 function ready() {
   nakedFormSelect('.example-1');
   nakedFormSelect('.example-3', {
+    settings: {
+      dropupThreshold: 100
+    },
     keywordSearch: {
       on: true,
     }
@@ -19,6 +22,7 @@ function ready() {
     const select2 = document.querySelector('[name="select2"]');
     const select3 = document.querySelector('[name="select3"]');
     const select4 = document.querySelector('[name="select4"]');
+    const select5 = document.querySelector('[name="select5"]');
 
     $submitBtn.addEventListener('click', (event) => {
       $formResults.innerHTML = '';
@@ -30,6 +34,7 @@ function ready() {
       Array.from(select2.selectedOptions).forEach((option) => { results.push(option.value) })
       Array.from(select3.selectedOptions).forEach((option) => { results.push(option.value) })
       Array.from(select4.selectedOptions).forEach((option) => { results.push(option.value) })
+      Array.from(select5.selectedOptions).forEach((option) => { results.push(option.value) })
 
       results.forEach((selectedOptionsSet) => {
         let $container = document.createElement('div');

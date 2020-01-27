@@ -1,8 +1,8 @@
-/* Naked Form Select v1.0.9 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.0.10 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
 
- function nakedFormSelect(target = 'select', { context = { value: undefined, queryDocument: false }, keywordSearch = { on: false, placeholder: undefined } } = {}) {
+ function nakedFormSelect(target = 'select', { settings = { dropupThreshold: 50 }, context = { value: undefined, queryDocument: false }, keywordSearch = { on: false, placeholder: undefined } } = {}) {
 
   // in the context of Drupal, the context.queryDocument default value is not being set properly as defined above
   // therefore, the following ternary statement fixes it
@@ -11,6 +11,7 @@
   let $source;
   let $targetSelector;
   let targetSelectorID;
+  let dropupThreshold = settings.dropupThreshold;
 
   const build = {
     index: function() {
@@ -108,10 +109,14 @@
         if (select.multiple) {
           // update placeholder text for multiple select
           let selectedOptionsArr = Array.from(select.options).filter(option => option.selected === true);
-          let placeholderArr = []
-          selectedOptionsArr.forEach((option) => { placeholderArr.push(option.innerText) });
 
-          $placeholderContainer.textContent = placeholderArr.join(', ');
+          selectedOptionsArr.forEach((option) => {
+            select.previousElementSibling.querySelector(`li[data-index="${option.index}"]`).classList.add('selected');
+           });
+
+          let keyword;
+          select.getAttribute('data-multiple-keyword') !== null ? keyword = select.getAttribute('data-multiple-keyword') + 's' : keyword = 'items';
+          $placeholderContainer.textContent = `${selectedOptionsArr.length} ${keyword} selected`;
 
           // if there is nothing selected, set it to the first option
           if (select.options.selectedIndex === -1) {
@@ -122,7 +127,7 @@
           let selectedIndex = select.options.selectedIndex;
 
           $placeholderContainer.textContent = select.options[selectedIndex].textContent;
-
+          select.previousElementSibling.querySelector(`li[data-index="${selectedIndex}"]`).classList.add('selected');
         }
       })
     }
@@ -148,7 +153,9 @@
 
             selectArr[i].classList.remove('open');
             document.querySelector(`[data-naked-select][data-index='${openSelectDataID}'] .options-wrap`).style.height = '0';
-
+            setTimeout(() => {
+              selectArr[i].classList.remove('dropup');
+            }, 255);
           }
         }
       })
@@ -171,9 +178,18 @@
           if ($selectContainer.classList.contains('open')) {
             $selectContainer.classList.remove('open');
             $listContainer.style.height = '0';
+            event.target.parentNode.classList.remove('dropup');
           } else {
             $selectContainer.classList.add('open');
             $listContainer.style.height = `${listHeight}px`;
+
+            let windowHeight = window.innerHeight;
+            let scrollPosition = window.scrollY;
+            let btnPosition = window.scrollY + event.target.getBoundingClientRect().top + event.target.offsetHeight;
+            if (windowHeight - btnPosition + scrollPosition < dropupThreshold) {
+              event.target.parentNode.classList.add('dropup');
+              event.target.nextSibling.style.bottom = `${event.target.offsetHeight}px`;
+            }
           }
         })
       }, interactive.globalClose())
@@ -214,11 +230,18 @@
 
             // update placeholder text
             let selectedOptionsArr = Array.from($select.options).filter(option => option.selected === true);
-            let placeholderArr = [];
 
-            selectedOptionsArr.forEach((option) => { placeholderArr.push(option.innerText) });
+            if (selectedOptionsArr.length > 1) {
+              selectedOptionsArr.forEach((option) => {
+                $select.previousElementSibling.querySelector(`li[data-index="${option.index}"]`).classList.add('selected');
+              });
 
-            $placeholderContainer.textContent = placeholderArr.join(', ');
+              let keyword;
+              $select.getAttribute('data-multiple-keyword') !== null ? keyword = $select.getAttribute('data-multiple-keyword') + 's' : keyword = 'items';
+              $placeholderContainer.textContent = `${selectedOptionsArr.length} ${keyword} selected`;
+            } else if (selectedOptionsArr.length === 1) {
+              $placeholderContainer.textContent = selectedOptionsArr[0].text;
+            }
 
             // if there is nothing selected, set it to the first option
             if ($select.options.selectedIndex === -1) {

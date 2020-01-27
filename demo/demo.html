@@ -16,8 +16,8 @@
     <h2>Single Select</h2>
     <form id="testForm">
         <select class="normal example-1" name="select1">
-            <option value="none">Make a selection from Option 1</option>
-            <option value="option1:1">Option1 : 1</option>
+            <option value="none">Make a selection from Single Select Dropdown</option>
+            <option value="option1:1" selected>Option1 : 1</option>
             <option value="option1:2">Option1 : 2</option>
             <option value="option1:3">Option1 : 3</option>
             <option value="option1:4">Option1 : 4</option>
@@ -25,16 +25,27 @@
         </select>
         <h2>Multiple Select</h2>
         <select class="normal example-1" name="select2" multiple>
-            <option value="none">Make a selection from Option 2</option>
+            <option value="none">Make a selection from Multiple Select Dropdown</option>
             <option value="option2:1">Option2 : 1</option>
             <option value="option2:2">Option2 : 2</option>
             <option value="option2:3">Option2 : 3</option>
             <option value="option2:4">Option2 : 4</option>
             <option value="option2:5">Option2 : 5</option>
         </select>
+        <h2>Multiple Select With Modified Keyword Verbiage</h2>
+        <span>When more than 1 option is selected, the default verbiage is 'x items selected'. This example showcases when the keyword 'item' is modified to 'donut' for example</span>
+        <select class="normal example-1" name="select3" data-multiple-keyword="donut" multiple>
+            <option value="none">Make a selection from Multiple Select Dropdown with modified keyword Dropdown</option>
+            <option value="option2:1">Option2 : 1</option>
+            <option value="option2:2">Option2 : 2</option>
+            <option value="option2:3" selected>Option2 : 3</option>
+            <option value="option2:4" selected>Option2 : 4</option>
+            <option value="option2:5" selected>Option2 : 5</option>
+        </select>
         <h2>Select with predictive search</h2>
-        <select class="keyword-search example-3" name="select3">
-            <option value="none">Make a selection from Option 3</option>
+        <span>In this demo, I've also modified the dropup threshold to 100px's. Dropup threshold indicates how many pixels away from the window height can the dropdown button be before the dropdown list drops upwards instead of down.</span>
+        <select class="keyword-search example-3" name="select4">
+            <option value="none">Make a selection from Keyword Search Dropdown</option>
             <option value="option3:1">Option3 : 1</option>
             <option value="option3:2">Option3 : 2</option>
             <option value="option3:3">Option3 : 3</option>
@@ -43,8 +54,8 @@
         </select>
         <h2>Select within context parameter</h2>
         <div class="section-with-context">
-            <select class="example-4" name="select4">
-                <option value="none">Make a selection from Option 2</option>
+            <select class="example-4" name="select5">
+                <option value="none">Make a selection from Dropdown with Context Parameter</option>
                 <option value="option2:1">Option2 : 1</option>
                 <option value="option2:2">Option2 : 2</option>
                 <option value="option2:3">Option2 : 3</option>

@@ -22,7 +22,14 @@ Include the files in the [dist/js/ie11-polyfills](https://github.com/developerda
 Initialize by passing in your selector. For example: `nakedFormSelect('select')`
 
 ### Multi-select
+#### How to enable
 To enable multi-select, just make sure your `<select>` has the multiple property, ex) `<select multiple>`
+#### Modifying multiselect verbiage
+By default, in a multiselect dropdown, if one option is selected, the button/placeholder text is updated to read the selected option's text. However, if multiple options are selected, the button/placeholder text reads 'x items selected'. If you'd like to modify the keyword 'item' to say something else, add the data attribute `data-multiple-keyword` to the `select`. ex) `<select data-multiple-keyword="donut" multiple>` will read 'x donuts selected'.
+
+### Settings Options
+#### dropupThreshold
+Dropup threshold indicates how many pixels away from the bottom of the window height can the dropdown button be before the dropdown list drops upwards instead of down. This is only calculated on click.
 
 ### Keyword Search
 Enabling keyword search adds an input with a button to the options dropdown. The options are reduced based off of the matching characters entered into the input by the user. In addition to the 'on' option, there is also a placeholder option in which you can control the input's placeholder text.
@@ -57,6 +64,9 @@ So, if this option is turned on (default is 'false'), context.value will be quer
 ### Default Settings
 ```
 {
+  settings = {
+    dropupThreshold: 50
+  },
   context = {
     value: undefined,
     queryDocument: false

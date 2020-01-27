@@ -7,6 +7,12 @@
             }
         }
     }
+    &.dropup {
+        position: relative;
+        .options-wrap {
+            position: absolute;
+        }
+    }
     select {
         display: none;
     }
