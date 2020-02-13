@@ -1,4 +1,4 @@
-/* Naked Form Select v1.0.10 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.0.11 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
 
@@ -109,19 +109,25 @@
         if (select.multiple) {
           // update placeholder text for multiple select
           let selectedOptionsArr = Array.from(select.options).filter(option => option.selected === true);
+          let selectedIndex = select.options.selectedIndex;
 
           selectedOptionsArr.forEach((option) => {
             select.previousElementSibling.querySelector(`li[data-index="${option.index}"]`).classList.add('selected');
            });
 
           let keyword;
-          select.getAttribute('data-multiple-keyword') !== null ? keyword = select.getAttribute('data-multiple-keyword') + 's' : keyword = 'items';
-          $placeholderContainer.textContent = `${selectedOptionsArr.length} ${keyword} selected`;
 
           // if there is nothing selected, set it to the first option
           if (select.options.selectedIndex === -1) {
-              $placeholderContainer.textContent = select.options[0].textContent;
+            $placeholderContainer.textContent = select.options[0].textContent;
+          } else if (select.getAttribute('data-multiple-keyword') !== null && selectedOptionsArr.length > 1) {
+            keyword = select.getAttribute('data-multiple-keyword') + 's';
+            $placeholderContainer.textContent = `${selectedOptionsArr.length} ${keyword} selected`;
+          } else {
+            keyword = 'items';
+            $placeholderContainer.textContent = select.options[selectedIndex].textContent;
           }
+
         } else {
 
           let selectedIndex = select.options.selectedIndex;
@@ -149,10 +155,10 @@
         for (let i = 0; i < selectArr.length; i++) {
           if (selectArr[i].classList.contains('open') && !selectArr[i].contains(element.target)) {
 
-            let openSelectDataID = parseInt(selectArr[i].getAttribute('data-index'));
-
+            let openSelectIndexID = parseInt(selectArr[i].getAttribute('data-index'));
+            let openSelectID = selectArr[i].getAttribute('data-naked-select-id');
             selectArr[i].classList.remove('open');
-            document.querySelector(`[data-naked-select][data-index='${openSelectDataID}'] .options-wrap`).style.height = '0';
+            document.querySelector(`[data-naked-select-id='${openSelectID}'][data-index='${openSelectIndexID}'] .options-wrap`).style.height = '0';
             setTimeout(() => {
               selectArr[i].classList.remove('dropup');
             }, 255);
@@ -174,7 +180,6 @@
           event.preventDefault();
 
           let listHeight = $listContainer.scrollHeight;
-
           if ($selectContainer.classList.contains('open')) {
             $selectContainer.classList.remove('open');
             $listContainer.style.height = '0';
