@@ -78,7 +78,7 @@ Add a submit button to the bottom of your dropdown list by the following example
   nakedFormSelect('select', {
     submitBtn: {
       on: true,
-      placeholder: 'Submit this form'
+      text: 'Submit this form'
     }
   });
 ```

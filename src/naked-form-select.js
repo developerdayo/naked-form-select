@@ -1,4 +1,4 @@
-/* Naked Form Select v1.0.13 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.0.14 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
 
@@ -25,15 +25,23 @@
       }, 1);
     },
     submitBtn: () => {
-      let submitBtn = document.createElement('button');
-      submitBtn.textContent = 'Submit the form';
-      submitBtn.classList.add('naked-submit');
+      let $submitBtn = document.createElement('button');
+      let $submitBtnText;
 
-      submitBtn.addEventListener('click', (e) => {
+      if (submitBtn.text === undefined) {
+        $submitBtnText = submitBtn.text = 'submit';
+      } else {
+        $submitBtnText = submitBtn.text;
+      }
+
+      $submitBtn.textContent = $submitBtnText;
+      $submitBtn.classList.add('naked-submit');
+
+      $submitBtn.addEventListener('click', (e) => {
         e.target.closest('form').submit();
       })
 
-      return submitBtn;
+      return $submitBtn;
     },
     keywordSearchInput: () => {
       let $searchContainer = document.createElement('div');
@@ -126,10 +134,9 @@
 
         // add submit button markup if option is on
         if (submitBtn.on === true) {
-          let submitBtn = build.submitBtn();
+          let $submitBtn = build.submitBtn();
 
-          $list.insertAdjacentElement('afterend', submitBtn);
-          console.log(selectElement);
+          $list.insertAdjacentElement('afterend', $submitBtn);
         }
 
       }, build.index())
