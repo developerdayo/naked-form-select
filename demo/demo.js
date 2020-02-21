@@ -1,5 +1,11 @@
 function ready() {
   nakedFormSelect('.example-1');
+  nakedFormSelect('.example-2', {
+    submitBtn: {
+      on: true,
+      text: 'apply options'
+    }
+  });
   nakedFormSelect('.example-3', {
     settings: {
       dropupThreshold: 100

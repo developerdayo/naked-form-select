@@ -1,8 +1,8 @@
-/* Naked Form Select v1.0.12 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.0.13 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
 
- function nakedFormSelect(target = 'select', { settings = { dropupThreshold: 50 }, context = { value: undefined, queryDocument: false }, keywordSearch = { on: false, placeholder: undefined } } = {}) {
+ const nakedFormSelect = (target = 'select', { settings = { dropupThreshold: 50 }, context = { value: undefined, queryDocument: false }, keywordSearch = { on: false, placeholder: undefined }, submitBtn = { on: false, text: undefined } } = {}) => {
 
   // in the context of Drupal, the context.queryDocument default value is not being set properly as defined above
   // therefore, the following ternary statement fixes it
@@ -14,18 +14,28 @@
   let dropupThreshold = settings.dropupThreshold;
 
   const build = {
-    index: function() {
-      setTimeout(() => {
-        setIndex();
-      }, 1);
-
-      function setIndex() {
+    index: () => {
+      let setIndex = () => {
         $source.querySelectorAll('[data-naked-select-id]').forEach(($nakedContainer, index) => {
           $nakedContainer.setAttribute('data-index', index);
         })
       }
+      setTimeout(() => {
+        setIndex();
+      }, 1);
     },
-    keywordSearchInput: function() {
+    submitBtn: () => {
+      let submitBtn = document.createElement('button');
+      submitBtn.textContent = 'Submit the form';
+      submitBtn.classList.add('naked-submit');
+
+      submitBtn.addEventListener('click', (e) => {
+        e.target.closest('form').submit();
+      })
+
+      return submitBtn;
+    },
+    keywordSearchInput: () => {
       let $searchContainer = document.createElement('div');
       $searchContainer.classList.add('keyword-search-wrap');
 
@@ -39,7 +49,7 @@
 
       return $searchContainer;
     },
-    lists: function() {
+    lists: () => {
       $source.querySelectorAll($targetSelector).forEach((selectElement, index) => {
         // get an array of the options
         let options = Array.from(selectElement.childNodes).filter(option => option.nodeName === 'OPTION');
@@ -113,9 +123,18 @@
           $list.insertAdjacentElement('beforebegin', $searchContainer);
 
         }
+
+        // add submit button markup if option is on
+        if (submitBtn.on === true) {
+          let submitBtn = build.submitBtn();
+
+          $list.insertAdjacentElement('afterend', submitBtn);
+          console.log(selectElement);
+        }
+
       }, build.index())
     },
-    currentState: function() {
+    currentState: () => {
       $source.querySelectorAll(`${targetSelectorID}[data-naked-select] select`).forEach((select, index) => {
 
         let $placeholderContainer = document.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .toggle-dropdown`);
@@ -160,16 +179,16 @@
     }
   }
   const interactive = {
-    triggerEvent: function(el, type) {
+    triggerEvent: (el, type) => {
       if ('createEvent' in document) {
         var e = document.createEvent('HTMLEvents');
         e.initEvent(type, false, true);
         el.dispatchEvent(e);
       }
     },
-    globalClose: function() {
+    globalClose: () => {
       // close all dropdowns when clicked outside of select
-      document.querySelector('body').addEventListener('click', function(element) {
+      document.querySelector('body').addEventListener('click', (element) => {
 
         let selectArr = Array.from(document.querySelectorAll('[data-naked-select]'));
 
@@ -187,8 +206,8 @@
         }
       })
     },
-    toggle: function() {
-      $source.querySelectorAll(`${targetSelectorID}[data-naked-select] .toggle-dropdown`).forEach(function(btnElement, index) {
+    toggle: () => {
+      $source.querySelectorAll(`${targetSelectorID}[data-naked-select] .toggle-dropdown`).forEach((btnElement, index) => {
 
         let $selectContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${index}']`);
         let $listContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .options-wrap`);
@@ -220,7 +239,7 @@
         })
       }, interactive.globalClose())
     },
-    select: function() {
+    select: () => {
 
       let listValueArr = []
 
@@ -298,14 +317,14 @@
         })
       })
     },
-    keywordSearch: function() {
+    keywordSearch: () => {
       if (keywordSearch.on === true) {
 
           $source.querySelectorAll(targetSelectorID).forEach(($container) => {
           $container.setAttribute('keywordSearch', 'on');
         })
 
-        $source.querySelectorAll($targetSelector).forEach(function(selectElement, index) {
+        $source.querySelectorAll($targetSelector).forEach((selectElement, index) => {
 
           // get an array of the options
           let optionsTextArr = [];
@@ -326,7 +345,7 @@
 
             let enteredValue = e.target.value.toLowerCase();
 
-            let filteredResultsArr = options.filter(function(option) {
+            let filteredResultsArr = options.filter((option) => {
               let lowercase = option.textContent.toLowerCase();
               if (lowercase.match(enteredValue)) {
                   return option;

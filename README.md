@@ -15,7 +15,7 @@ I've provided a simple demo in the [demo folder](https://github.com/developerday
 ]
 
 ### For IE11 Support
-Include the files in the [dist/js/ie11-polyfills](https://github.com/developerdayo/naked-form-select/tree/master/dist/js/ie11-polyfills) as this plugin uses forEach and Array.from.
+Include the files in the [dist/js/ie11-polyfills](https://github.com/developerdayo/naked-form-select/tree/master/dist/js/ie11-polyfills) as this plugin uses forEach, Array.from, and closest.
 
 ## Usage
 ### Initialize
@@ -23,36 +23,6 @@ Initialize by passing in your selector. For example: `nakedFormSelect('select')`
 
 ### Multi-select
 To enable multi-select, just make sure your `<select>` has the multiple property, ex) `<select multiple>`
-
-### Keyword Search
-Enabling keyword search adds an input with a button to the options dropdown. The options are reduced based off of the matching characters entered into the input by the user. In addition to the 'on' option, there is also a placeholder option in which you can control the input's placeholder text.
-
-Enable keyword search for your select by the following example:
-
-```
-  nakedFormSelect('select', {
-    keywordSearch: {
-      on: true,
-      placeholder: 'Enter keyword'
-    }
-  });
-```
-
-### Context Option
-Query target select elements within a certain context. This option accepts both a value and a boolean property to query document. For instance, reference
-Example #4 in the demo.html file. If you want to initialize select elements with a class of .example-4 within a containing element with a class of .section-with-context, you would do so like this:
-```
-nakedFormSelect('.example-4', {
-  context: {
-    value: '.section-with-context',
-    queryDocument: true
-  }
-});
-```
-This essentially accomplishes what the context parameter in jQuery selectors does.
-
-I specifically created the 'queryDocument' option for the Drupal projects I work on to take advantage of the context variable paired with Drupal Behaviors.
-So, if this option is turned on (default is 'false'), context.value will be queried intead of document.
 
 ### Data Attributes
 #### data-multiple-keyword
@@ -88,6 +58,48 @@ Will result in an output that looks like this (the following is not the exact ma
 </ul>
 ```
 
+### Keyword Search
+Enabling keyword search adds an input with a button to the options dropdown. The options are reduced based off of the matching characters entered into the input by the user. In addition to the 'on' option, there is also a placeholder option in which you can control the input's placeholder text.
+
+Enable keyword search for your select by the following example:
+
+```
+  nakedFormSelect('select', {
+    keywordSearch: {
+      on: true,
+      placeholder: 'Enter keyword'
+    }
+  });
+```
+
+### Submit Button
+Add a submit button to the bottom of your dropdown list by the following example:
+```
+  nakedFormSelect('select', {
+    submitBtn: {
+      on: true,
+      placeholder: 'Submit this form'
+    }
+  });
+```
+It will submit the parent form.
+
+### Context Option
+Query target select elements within a certain context. This option accepts both a value and a boolean property to query document. For instance, reference
+Example #4 in the demo.html file. If you want to initialize select elements with a class of .example-4 within a containing element with a class of .section-with-context, you would do so like this:
+```
+nakedFormSelect('.example-4', {
+  context: {
+    value: '.section-with-context',
+    queryDocument: true
+  }
+});
+```
+This essentially accomplishes what the context parameter in jQuery selectors does.
+
+I specifically created the 'queryDocument' option for the Drupal projects I work on to take advantage of the context variable paired with Drupal Behaviors.
+So, if this option is turned on (default is 'false'), context.value will be queried intead of document.
+
 ### Default Settings
 ```
 {
@@ -98,6 +110,10 @@ Will result in an output that looks like this (the following is not the exact ma
   keywordSearch = {
     on: false,
     placeholder: undefined
+  },
+  submitBtn = {
+    on: false,
+    text: undefined
   }
 }
 ```
