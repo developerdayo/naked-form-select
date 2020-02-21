@@ -1,4 +1,4 @@
-/* Naked Form Select v1.0.11 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.0.12 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
 
@@ -43,12 +43,25 @@
       $source.querySelectorAll($targetSelector).forEach((selectElement, index) => {
         // get an array of the options
         let options = Array.from(selectElement.childNodes).filter(option => option.nodeName === 'OPTION');
+        let dataLabel;
+
+        if (selectElement.getAttribute('data-label') === 'true') {
+          dataLabel = options[0];
+          options.shift();
+        }
+
         let optionsTextArr = [];
 
         options.forEach((option) => {optionsTextArr.push(option.textContent)});
 
         // create placeholder text
-        let placeholderText = options[0].textContent;
+        let placeholderText;
+
+        if ( selectElement.getAttribute('data-label') === 'true') {
+          placeholderText = dataLabel.textContent;
+        } else {
+          placeholderText = options[0].textContent;
+        }
         let $placeholderContainer = document.createElement('button');
 
 
@@ -65,6 +78,7 @@
 
         // remove the first item from options array because its the placeholder text
         optionsTextArr.forEach((listItem, index) => {
+
           let item = document.createElement('li');
 
           item.setAttribute('data-index', index);
@@ -112,7 +126,7 @@
           let selectedIndex = select.options.selectedIndex;
 
           selectedOptionsArr.forEach((option) => {
-            select.previousElementSibling.querySelector(`li[data-index="${option.index}"]`).classList.add('selected');
+            select.previousElementSibling.querySelector(`li[data-index='${option.index}']`).classList.add('selected');
            });
 
           let keyword;
@@ -132,8 +146,15 @@
 
           let selectedIndex = select.options.selectedIndex;
 
-          $placeholderContainer.textContent = select.options[selectedIndex].textContent;
-          select.previousElementSibling.querySelector(`li[data-index="${selectedIndex}"]`).classList.add('selected');
+          // set the label
+          if (select.getAttribute('data-label') === 'true' && selectedIndex === 0) {
+            $placeholderContainer.textContent = select.options[0].textContent;
+          } else {
+            $placeholderContainer.textContent = select.options[selectedIndex].textContent;
+
+            // add the 'selected' class
+            select.previousElementSibling.querySelector(`li[data-index="${selectedIndex}"]`).classList.add('selected');
+          }
         }
       })
     }
