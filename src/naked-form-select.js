@@ -1,4 +1,5 @@
-/* Naked Form Select v1.0.14 (https://github.com/developerdayo/naked-form-select)
+// HASN'T BEEN PUSHED YET. TESTING IN RUSH DUE TO DATA-LABEL COMPLEXITIES
+/* Naked Form Select v1.0.15 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
 
@@ -149,23 +150,50 @@
         if (select.multiple) {
           // update placeholder text for multiple select
           let selectedOptionsArr = Array.from(select.options).filter(option => option.selected === true);
+
+          if (select.getAttribute('data-label') === 'true') {
+              selectedOptionsArr = selectedOptionsArr.filter(option => option.index !== 0);
+          }
+
           let selectedIndex = select.options.selectedIndex;
 
           selectedOptionsArr.forEach((option) => {
-            select.previousElementSibling.querySelector(`li[data-index='${option.index}']`).classList.add('selected');
+              if (select.getAttribute('data-label') === 'true' && selectedIndex !== 0) {
+
+                select.previousElementSibling.querySelector(`li[data-index='0']`).classList.add('selected');
+
+              } else if (select.getAttribute('data-label') === undefined) {
+
+                  select.previousElementSibling.querySelector(`li[data-index='${option.index}']`).classList.add('selected');
+
+              }
            });
 
           let keyword;
 
           // if there is nothing selected, set it to the first option
           if (select.options.selectedIndex === -1) {
+
+            // if nothing is selected, default to first option value
             $placeholderContainer.textContent = select.options[0].textContent;
+
           } else if (select.getAttribute('data-multiple-keyword') !== null && selectedOptionsArr.length > 1) {
+
+            // if using data-multiple-keyword and there's more than one
             keyword = select.getAttribute('data-multiple-keyword') + 's';
             $placeholderContainer.textContent = `${selectedOptionsArr.length} ${keyword} selected`;
-          } else {
+
+          } else if (selectedOptionsArr.length > 1) {
+
+              // if using data-label and there's more than one
             keyword = 'items';
-            $placeholderContainer.textContent = select.options[selectedIndex].textContent;
+            $placeholderContainer.textContent = `${selectedOptionsArr.length} ${keyword} selected`;
+
+          } else {
+
+              keyword = 'items';
+              $placeholderContainer.textContent = select.options[selectedIndex].textContent;
+
           }
 
         } else {
@@ -254,7 +282,15 @@
 
         listItem.addEventListener('click', () => {
 
-          let listItemIndex = listItem.getAttribute('data-index');
+
+          let listItemIndex;
+
+          if (document.querySelector(`${targetSelectorID} select`).getAttribute('data-label') === 'true') {
+              listItemIndex = parseInt(listItem.getAttribute('data-index')) + 1
+          } else {
+              listItemIndex = listItem.getAttribute('data-index');
+          }
+
           let listItemValue = listItem.textContent;
           let selectContainerIndex = listItem.parentNode.getAttribute('data-naked-select-list');
           let $select = $source.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] select`);
@@ -283,13 +319,24 @@
             // update placeholder text
             let selectedOptionsArr = Array.from($select.options).filter(option => option.selected === true);
 
+            if ($select.getAttribute('data-label') === 'true') {
+              selectedOptionsArr = selectedOptionsArr.filter(option => option.index !== 0);
+            }
+
             if (selectedOptionsArr.length > 1) {
+
               selectedOptionsArr.forEach((option) => {
-                $select.previousElementSibling.querySelector(`li[data-index="${option.index}"]`).classList.add('selected');
+                // if data-label is being utilized, lets make sure we adjust the index for that scenario
+                if ($select.getAttribute('data-label') === 'true' && option.index !== 0) {
+                  $select.previousElementSibling.querySelector(`li[data-index="${parseInt(option.index) - 1}"]`).classList.add('selected');
+                } else if ($select.getAttribute('data-label') !== 'true') {
+                  $select.previousElementSibling.querySelector(`li[data-index="${option.index}"]`).classList.add('selected');
+                }
               });
 
               let keyword;
               $select.getAttribute('data-multiple-keyword') !== null ? keyword = $select.getAttribute('data-multiple-keyword') + 's' : keyword = 'items';
+
               $placeholderContainer.textContent = `${selectedOptionsArr.length} ${keyword} selected`;
             } else if (selectedOptionsArr.length === 1) {
               $placeholderContainer.textContent = selectedOptionsArr[0].text;
