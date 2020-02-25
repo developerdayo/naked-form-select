@@ -71,7 +71,7 @@
 
         let optionsTextArr = [];
 
-        options.forEach((option) => {optionsTextArr.push([option.index, option.textContent])});
+        options.forEach((option) => {optionsTextArr.push(option.textContent)});
 
         // create placeholder text
         let placeholderText;
@@ -96,13 +96,13 @@
         $list.setAttribute('data-naked-select-list', index);
 
         // remove the first item from options array because its the placeholder text
-        optionsTextArr.forEach((listItem) => {
+        optionsTextArr.forEach((listItem, index) => {
 
           let item = document.createElement('li');
 
-          item.setAttribute('data-index', listItem[0]);
+          item.setAttribute('data-index', index);
 
-          item.appendChild(document.createTextNode(listItem[1]));
+          item.appendChild(document.createTextNode(listItem));
 
           $list.appendChild(item);
         })
@@ -254,13 +254,14 @@
         btnElement.addEventListener('click', (event) => {
           event.preventDefault();
 
+          let listHeight = $listContainer.scrollHeight;
           if ($selectContainer.classList.contains('open')) {
             $selectContainer.classList.remove('open');
             $listContainer.style.height = '0';
             event.target.parentNode.classList.remove('dropup');
           } else {
             $selectContainer.classList.add('open');
-            $listContainer.style.height = null;
+            $listContainer.style.height = `${listHeight}px`;
 
             let windowHeight = window.innerHeight;
             let scrollPosition = window.scrollY;
@@ -282,14 +283,22 @@
         listItem.addEventListener('click', () => {
 
 
-          let listItemIndex = parseInt(listItem.getAttribute('data-index'));
+          let listItemIndex;
+
+          if (document.querySelector(`${targetSelectorID} select`).getAttribute('data-label') === 'true') {
+              listItemIndex = parseInt(listItem.getAttribute('data-index')) + 1
+          } else {
+              listItemIndex = listItem.getAttribute('data-index');
+          }
 
           let listItemValue = listItem.textContent;
           let selectContainerIndex = listItem.parentNode.getAttribute('data-naked-select-list');
           let $select = $source.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] select`);
 
+          let listHeight = $source.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] .options-wrap`).scrollHeight;
+
           // update the select value
-          $select.options[listItemIndex].selected = true;
+          $select.options[parseInt(listItemIndex)].selected = true;
 
           interactive.triggerEvent($select, 'change');
 
@@ -301,10 +310,10 @@
             // toggle selected class
             if (listItem.classList.contains('selected')) {
               listItem.classList.remove('selected');
-              $select.options[listItemIndex].selected = false;
+              $select.options[parseInt(listItemIndex)].selected = false;
             } else {
               listItem.classList.add('selected');
-              $select.options[listItemIndex].selected = true;
+              $select.options[parseInt(listItemIndex)].selected = true;
             }
 
             // update placeholder text
@@ -318,7 +327,9 @@
 
               selectedOptionsArr.forEach((option) => {
                 // if data-label is being utilized, lets make sure we adjust the index for that scenario
-                if ($select.getAttribute('data-label') !== 'true' || option.index !== 0) {
+                if ($select.getAttribute('data-label') === 'true' && option.index !== 0) {
+                  $select.previousElementSibling.querySelector(`li[data-index="${parseInt(option.index) - 1}"]`).classList.add('selected');
+                } else if ($select.getAttribute('data-label') !== 'true') {
                   $select.previousElementSibling.querySelector(`li[data-index="${option.index}"]`).classList.add('selected');
                 }
               });
@@ -332,7 +343,7 @@
             }
 
             // if there is nothing selected, set it to the first option
-            if (selectedOptionsArr.length === 0) {
+            if ($select.options.selectedIndex === -1) {
               $placeholderContainer.textContent = $select.options[0].textContent;
             }
 
@@ -347,7 +358,7 @@
               $listContainer.style.height = '0';
             } else {
               $selectContainer.classList.add('open');
-              $listContainer.style.height = null;
+              $listContainer.style.height = `${listHeight}px`;
             }
 
             // toggle selected class
@@ -409,7 +420,11 @@
               })
             })
 
-            $source.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .options-wrap`).style.height = null;
+            // update options-wrap height
+            let listHeight = $list.offsetHeight;
+            let keywordSearchHeight = $source.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .keyword-search-wrap`).offsetHeight;
+
+            $source.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .options-wrap`).style.height = listHeight + keywordSearchHeight + 'px';
           })
         })
       }
