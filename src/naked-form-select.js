@@ -1,4 +1,4 @@
-/* Naked Form Select v1.0.15 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.0.16 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
 
@@ -307,6 +307,8 @@
 
             if (selectedOptionsArr.length > 1) {
 
+              console.log(selectedOptionsArr);
+
               selectedOptionsArr.forEach((option) => {
                 // if data-label is being utilized, lets make sure we adjust the index for that scenario
                 if ($select.getAttribute('data-label') !== 'true' || option.index !== 0) {
@@ -323,7 +325,7 @@
             }
 
             // if there is nothing selected, set it to the first option
-            if ($selectedOptionsArr.length === 0) {
+            if (selectedOptionsArr.length === 0) {
               $placeholderContainer.textContent = $select.options[0].textContent;
             }
 
