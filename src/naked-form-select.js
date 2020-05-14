@@ -1,4 +1,4 @@
-/* Naked Form Select v1.0.16 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.1.0 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
 
@@ -16,7 +16,8 @@
   const build = {
     index: () => {
       let setIndex = () => {
-        $source.querySelectorAll('[data-naked-select-id]').forEach(($nakedContainer, index) => {
+        document.querySelectorAll('[data-naked-select-id]').forEach(($nakedContainer, index) => {
+
           $nakedContainer.setAttribute('data-index', index);
         })
       }
@@ -58,149 +59,160 @@
       return $searchContainer;
     },
     lists: () => {
-      $source.querySelectorAll($targetSelector).forEach((selectElement, index) => {
-        // get an array of the options
-        let options = Array.from(selectElement.childNodes).filter(option => option.nodeName === 'OPTION');
-        let dataLabel;
+      document.querySelectorAll($targetSelector).forEach((selectElement, index) => {
+        if (!selectElement.getAttribute('data-initialized')) {
 
-        if (selectElement.getAttribute('data-label') === 'true') {
-          dataLabel = options[0];
-          options.shift();
+          // get an array of the options
+          let options = Array.from(selectElement.childNodes).filter(option => option.nodeName === 'OPTION');
+          let dataLabel;
+
+          if (selectElement.getAttribute('data-label') === 'true') {
+            dataLabel = options[0];
+            options.shift();
+          }
+
+          let optionsTextArr = [];
+
+          options.forEach((option) => {optionsTextArr.push([option.index, option.textContent])});
+
+          // create placeholder text
+          let placeholderText;
+
+          if ( selectElement.getAttribute('data-label') === 'true') {
+            placeholderText = dataLabel.textContent;
+          } else {
+            placeholderText = options[0].textContent;
+          }
+          let $placeholderContainer = document.createElement('button');
+
+
+          $placeholderContainer.classList.add('toggle-dropdown');
+          $placeholderContainer.setAttribute('aria-label', 'Click to expand options');
+          $placeholderContainer.textContent = placeholderText;
+
+          // create unordered list with the options text
+          let $listContainer = document.createElement('div');
+          $listContainer.classList.add('options-wrap');
+
+          let $list = document.createElement('ul');
+          $list.setAttribute('data-naked-select-list', index);
+
+          // remove the first item from options array because its the placeholder text
+          optionsTextArr.forEach((listItem) => {
+
+            let item = document.createElement('li');
+
+            item.setAttribute('data-index', listItem[0]);
+
+            item.appendChild(document.createTextNode(listItem[1]));
+
+            $list.appendChild(item);
+          })
+
+          $listContainer.appendChild($list);
+
+          // create and add the entirely new markup that will be styled containing select options
+          let $container = document.createElement('div');
+          $container.classList.add('naked-form-select-wrap');
+          $container.setAttribute('data-naked-select-id', $targetSelector);
+          $container.setAttribute('data-naked-select', index);
+
+          $container.appendChild($placeholderContainer);
+
+          $container.appendChild($listContainer);
+
+
+          selectElement.parentNode.insertBefore($container, selectElement);
+          $container.appendChild(selectElement);
+
+
+          // add predict search markup if this option is turned on
+          if (keywordSearch.on === true) {
+
+            let $searchContainer = build.keywordSearchInput();
+
+            $list.insertAdjacentElement('beforebegin', $searchContainer);
+
+          }
+
+          // add submit button markup if option is on
+          if (submitBtn.on === true) {
+            let $submitBtn = build.submitBtn();
+
+            $list.insertAdjacentElement('afterend', $submitBtn);
+          }
+
+          build.index();
         }
-
-        let optionsTextArr = [];
-
-        options.forEach((option) => {optionsTextArr.push([option.index, option.textContent])});
-
-        // create placeholder text
-        let placeholderText;
-
-        if ( selectElement.getAttribute('data-label') === 'true') {
-          placeholderText = dataLabel.textContent;
-        } else {
-          placeholderText = options[0].textContent;
-        }
-        let $placeholderContainer = document.createElement('button');
-
-
-        $placeholderContainer.classList.add('toggle-dropdown');
-        $placeholderContainer.setAttribute('aria-label', 'Click to expand options');
-        $placeholderContainer.textContent = placeholderText;
-
-        // create unordered list with the options text
-        let $listContainer = document.createElement('div');
-        $listContainer.classList.add('options-wrap');
-
-        let $list = document.createElement('ul');
-        $list.setAttribute('data-naked-select-list', index);
-
-        // remove the first item from options array because its the placeholder text
-        optionsTextArr.forEach((listItem) => {
-
-          let item = document.createElement('li');
-
-          item.setAttribute('data-index', listItem[0]);
-
-          item.appendChild(document.createTextNode(listItem[1]));
-
-          $list.appendChild(item);
-        })
-
-        $listContainer.appendChild($list);
-
-        // create and add the entirely new markup that will be styled containing select options
-        let $container = document.createElement('div');
-        $container.classList.add('naked-form-select-wrap');
-        $container.setAttribute('data-naked-select-id', $targetSelector);
-        $container.setAttribute('data-naked-select', index);
-
-        $container.appendChild($placeholderContainer);
-
-        $container.appendChild($listContainer);
-
-
-        selectElement.parentNode.insertBefore($container, selectElement);
-        $container.appendChild(selectElement);
-
-
-        // add predict search markup if this option is turned on
-        if (keywordSearch.on === true) {
-
-          let $searchContainer = build.keywordSearchInput();
-
-          $list.insertAdjacentElement('beforebegin', $searchContainer);
-
-        }
-
-        // add submit button markup if option is on
-        if (submitBtn.on === true) {
-          let $submitBtn = build.submitBtn();
-
-          $list.insertAdjacentElement('afterend', $submitBtn);
-        }
-
-      }, build.index())
+      })
     },
     currentState: () => {
       $source.querySelectorAll(`${targetSelectorID}[data-naked-select] select`).forEach((select, index) => {
+        if (!select.getAttribute('data-initialized')) {
 
-        let $placeholderContainer = document.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .toggle-dropdown`);
+          let siblings = Array.from(select.parentNode.childNodes);
+          let $placeholderContainer = siblings.filter(item => item.classList.contains('toggle-dropdown'))[0];
 
-        if (select.multiple) {
+          if (select.multiple) {
 
-          // update placeholder text for multiple select
-          let selectedOptionsArr = Array.from(select.options).filter(option => option.selected === true);
+            // update placeholder text for multiple select
+            let selectedOptionsArr = Array.from(select.options).filter(option => option.selected === true);
 
-          if (select.getAttribute('data-label') === 'true') {
-              selectedOptionsArr = selectedOptionsArr.filter(option => option.index !== 0);
-          }
+            if (select.getAttribute('data-label') === 'true') {
+                selectedOptionsArr = selectedOptionsArr.filter(option => option.index !== 0);
+            }
 
-          let selectedIndex = select.options.selectedIndex;
+            let selectedIndex = select.options.selectedIndex;
 
-          selectedOptionsArr.forEach((option) => {
-              select.previousElementSibling.querySelector(`li[data-index='${option.index}']`).classList.add('selected');
-           });
+            selectedOptionsArr.forEach((option) => {
+                select.previousElementSibling.querySelector(`li[data-index='${option.index}']`).classList.add('selected');
+             });
 
-          let keyword;
+            let keyword;
 
-          // if there is nothing selected, set it to the first option
-          if (select.options.selectedIndex === -1) {
+            // if there is nothing selected, set it to the first option
+            if (select.options.selectedIndex === -1) {
 
-            // if nothing is selected, default to first option value
-            $placeholderContainer.textContent = select.options[0].textContent;
+              // if nothing is selected, default to first option value
+              $placeholderContainer.textContent = select.options[0].textContent;
 
-          } else if (select.getAttribute('data-multiple-keyword') !== null && selectedOptionsArr.length > 1) {
+            } else if (select.getAttribute('data-pluralize') === 'false' && select.getAttribute('data-multiple-keyword') !== null && selectedOptionsArr.length > 1) {
+              // if using data-multiple-keyword and there's more than one but we don't want to pluralize
+              keyword = select.getAttribute('data-multiple-keyword');
+              $placeholderContainer.textContent = `${selectedOptionsArr.length} ${keyword} selected`;
 
-            // if using data-multiple-keyword and there's more than one
-            keyword = select.getAttribute('data-multiple-keyword') + 's';
-            $placeholderContainer.textContent = `${selectedOptionsArr.length} ${keyword} selected`;
+            } else if (select.getAttribute('data-multiple-keyword') !== null && selectedOptionsArr.length > 1) {
+              // if using data-multiple-keyword and there's more than one
+              keyword = select.getAttribute('data-multiple-keyword') + 's';
+              $placeholderContainer.textContent = `${selectedOptionsArr.length} ${keyword} selected`;
+            } else if (selectedOptionsArr.length > 1) {
 
-          } else if (selectedOptionsArr.length > 1) {
+                // if using data-label and there's more than one
+              keyword = 'items';
+              $placeholderContainer.textContent = `${selectedOptionsArr.length} ${keyword} selected`;
 
-              // if using data-label and there's more than one
-            keyword = 'items';
-            $placeholderContainer.textContent = `${selectedOptionsArr.length} ${keyword} selected`;
+            } else {
+
+                keyword = 'items';
+                $placeholderContainer.textContent = select.options[selectedIndex].textContent;
+
+            }
 
           } else {
 
-              keyword = 'items';
+            let selectedIndex = select.options.selectedIndex;
+
+            // set the label
+            if (select.getAttribute('data-label') === 'true' && selectedIndex === 0) {
+              $placeholderContainer.textContent = select.options[0].textContent;
+            } else {
               $placeholderContainer.textContent = select.options[selectedIndex].textContent;
 
+              // add the 'selected' class
+              select.previousElementSibling.querySelector(`li[data-index="${selectedIndex}"]`).classList.add('selected');
+            }
           }
-
-        } else {
-
-          let selectedIndex = select.options.selectedIndex;
-
-          // set the label
-          if (select.getAttribute('data-label') === 'true' && selectedIndex === 0) {
-            $placeholderContainer.textContent = select.options[0].textContent;
-          } else {
-            $placeholderContainer.textContent = select.options[selectedIndex].textContent;
-
-            // add the 'selected' class
-            select.previousElementSibling.querySelector(`li[data-index="${selectedIndex}"]`).classList.add('selected');
-          }
+          select.setAttribute('data-initialized', 'true');
         }
       })
     }
@@ -234,7 +246,9 @@
       })
     },
     toggle: () => {
-      $source.querySelectorAll(`${targetSelectorID}[data-naked-select] .toggle-dropdown`).forEach((btnElement, index) => {
+      $source.querySelectorAll(`${targetSelectorID}[data-naked-select] .toggle-dropdown`).forEach((btnElement) => {
+
+        let index = btnElement.parentNode.getAttribute('data-naked-select');
 
         let $selectContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${index}']`);
         let $listContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .options-wrap`);
@@ -267,9 +281,7 @@
     },
     select: () => {
 
-      let listValueArr = []
-
-      $source.querySelectorAll(`${targetSelectorID}[data-naked-select] li`).forEach((listItem, index) => {
+      $source.querySelectorAll(`${targetSelectorID}[data-naked-select] li`).forEach((listItem) => {
 
         listItem.addEventListener('click', () => {
 
@@ -307,8 +319,6 @@
 
             if (selectedOptionsArr.length > 1) {
 
-              console.log(selectedOptionsArr);
-
               selectedOptionsArr.forEach((option) => {
                 // if data-label is being utilized, lets make sure we adjust the index for that scenario
                 if ($select.getAttribute('data-label') !== 'true' || option.index !== 0) {
@@ -317,7 +327,14 @@
               });
 
               let keyword;
-              $select.getAttribute('data-multiple-keyword') !== null ? keyword = $select.getAttribute('data-multiple-keyword') + 's' : keyword = 'items';
+
+              if ($select.getAttribute('data-multiple-keyword') !== null && $select.getAttribute('data-pluralize') === 'false') {
+                keyword = $select.getAttribute('data-multiple-keyword');
+              } else if ($select.getAttribute('data-multiple-keyword') !== null) {
+                keyword = `${$select.getAttribute('data-multiple-keyword')}s`;
+              } else {
+                keyword = 'items';
+              }
 
               $placeholderContainer.textContent = `${selectedOptionsArr.length} ${keyword} selected`;
             } else if (selectedOptionsArr.length === 1) {

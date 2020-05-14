@@ -42,6 +42,7 @@
             <option value="option2:5">Option2 : 5</option>
         </select>
         <h2>Multiple Select Utilizes Modified Label (data-label attribute); Utilizes submitBtn option</h2>
+        <p>If you add <strong>data-label="true"</strong> on your <strong>select</strong>, it will exclude the first option from the dropdown list.</p>
         <select class="normal example-2" name="select3" data-label="true" multiple>
             <option value="I'm a data-label on a multiple select">I'm a data-label on a multiple select</option>
             <option value="option2:1">Option2 : 1</option>
@@ -53,7 +54,17 @@
         <h2>Multiple Select With Modified Keyword Verbiage (data-multiple-keyword attribute)</h2>
         <span>When more than 1 option is selected, the default verbiage is 'x items selected'. This example showcases when the keyword 'item' is modified to 'donut' for example</span>
         <select class="normal example-1" name="select4" data-multiple-keyword="donut" multiple>
-            <option value="none">Make a selection from Multiple Select Dropdown with modified keyword Dropdown</option>
+            <option value="none">Donut</option>
+            <option value="option2:1">Donut : 1</option>
+            <option value="option2:2">Donut : 2</option>
+            <option value="option2:3">Donut : 3</option>
+            <option value="option2:4">Donut : 4</option>
+            <option value="option2:5">Donut : 5</option>
+        </select>
+        <h2>Multiple Select With Modified Keyword Verbiage (data-multiple-keyword attribute) - DON'T PLURALIZE</h2>
+        <span>When more than 1 option is selected, the default verbiage is 'x items selected'. This example showcases when the keyword 'item' is modified to 'donut' for example</span>
+        <select class="normal example-1" name="select4" data-multiple-keyword="specialties" data-pluralize="false" multiple>
+            <option value="none">Specialties</option>
             <option value="option2:1">Option2 : 1</option>
             <option value="option2:2">Option2 : 2</option>
             <option value="option2:3">Option2 : 3</option>
