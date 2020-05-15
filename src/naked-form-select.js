@@ -89,6 +89,7 @@
           $placeholderContainer.classList.add('toggle-dropdown');
           $placeholderContainer.setAttribute('aria-label', 'Click to expand options');
           $placeholderContainer.textContent = placeholderText;
+          $placeholderContainer.setAttribute('type', 'button');
 
           // create unordered list with the options text
           let $listContainer = document.createElement('div');
@@ -142,6 +143,7 @@
             $list.insertAdjacentElement('afterend', $submitBtn);
           }
 
+          interactive.validationError(selectElement);
           build.index();
         }
       })
@@ -279,6 +281,39 @@
         })
       }, interactive.globalClose())
     },
+    addValidationMessage: (select) => {
+        if (!select.querySelector('.naked-form-select-wrap--error-message')) {
+          select.classList.add('error');
+
+          let errorMessage = document.createElement('div');
+          errorMessage.classList.add('naked-form-select-wrap--error-message');
+          errorMessage.textContent = 'Please make a selection';
+
+          select.insertBefore(errorMessage, select.childNodes[0]);
+        }
+    },
+    removeValidationMessage: (select) => {
+      if (select.classList.contains('error')) {
+          select.classList.remove('error');
+
+          let errorMessage = select.querySelector('.naked-form-select-wrap--error-message');
+          select.removeChild(errorMessage);
+      }
+    },
+    validationError: (select) => {
+      const form = select.closest('form');
+      const formSubmitBtn = form.querySelector('[type="submit"]');
+
+      formSubmitBtn.addEventListener('click', (e) => {
+          let nakedSelect = select.parentNode;
+
+          if (!select.checkValidity()) {
+              interactive.addValidationMessage(nakedSelect);
+          } else {
+              interactive.removeValidationMessage(nakedSelect);
+          }
+      })
+    },
     select: () => {
 
       $source.querySelectorAll(`${targetSelectorID}[data-naked-select] li`).forEach((listItem) => {
@@ -366,6 +401,11 @@
 
             // update the placeholder text
             $placeholderContainer.textContent = listItemValue;
+          }
+
+          if ($select.getAttribute('required')) {
+              if ($select.selectedIndex !== 0)
+                  interactive.removeValidationMessage(document.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}']`));
           }
         })
       })
