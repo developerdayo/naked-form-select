@@ -1,4 +1,4 @@
-/* Naked Form Select v1.1.0 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.1.1 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
 
@@ -145,6 +145,8 @@
 
           interactive.validationError(selectElement);
           build.index();
+
+          selectElement.setAttribute('data-initialized', 'true');
         }
       })
     },
