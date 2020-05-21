@@ -1,4 +1,4 @@
-/* Naked Form Select v1.1.2 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.1.3 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
 
@@ -16,7 +16,7 @@
   const build = {
     index: () => {
       let setIndex = () => {
-        document.querySelectorAll('[data-naked-select-id]').forEach(($nakedContainer, index) => {
+        $source.querySelectorAll('[data-naked-select-id]').forEach(($nakedContainer, index) => {
 
           $nakedContainer.setAttribute('data-index', index);
         })
@@ -37,6 +37,7 @@
 
       $submitBtn.textContent = $submitBtnText;
       $submitBtn.classList.add('naked-submit');
+      $submitBtn.setAttribute('tabindex', '-1');
 
       $submitBtn.addEventListener('click', (e) => {
         e.target.closest('form').submit();
@@ -49,6 +50,7 @@
       $searchContainer.classList.add('keyword-search-wrap');
 
       let $input = document.createElement('input');
+      $input.setAttribute('aria-label', 'Enter a keyword to reduce the list of options');
 
       if (keywordSearch.placeholder !== undefined) {
         $input.setAttribute('placeholder', keywordSearch.placeholder);
@@ -59,7 +61,7 @@
       return $searchContainer;
     },
     lists: () => {
-      document.querySelectorAll($targetSelector).forEach((selectElement, index) => {
+      $source.querySelectorAll($targetSelector).forEach((selectElement, index) => {
         if (!selectElement.getAttribute('data-initialized')) {
 
           // get an array of the options
@@ -147,7 +149,6 @@
           interactive.validationError(selectElement);
           build.index();
 
-          selectElement.setAttribute('data-initialized', 'true');
         }
       })
     },
@@ -254,40 +255,50 @@
       })
     },
     toggle: () => {
-      $source.querySelectorAll(`${targetSelectorID}[data-naked-select] .toggle-dropdown`).forEach((btnElement) => {
+      $source.querySelectorAll(`${targetSelectorID}[data-naked-select]`).forEach((selectEl) => {
+          if (!selectEl.getAttribute('data-initialized')) {
+              selectEl.querySelectorAll('.toggle-dropdown').forEach((btnElement) => {
 
-        let index = btnElement.parentNode.getAttribute('data-naked-select');
+                  let index = btnElement.parentNode.getAttribute('data-naked-select');
 
-        let $selectContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${index}']`);
-        let $listContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .options-wrap`);
+                  let $selectContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${index}']`);
+                  let $listContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .options-wrap`);
 
-        // get list container's initial height to create slide toggle effect with css' help
-        $listContainer.style.height = '0';
+                  // get list container's initial height to create slide toggle effect with css' help
+                  $listContainer.style.height = '0';
 
-        // the slide toggle click event
-        btnElement.addEventListener('click', (event) => {
-          event.preventDefault();
+                  // the slide toggle click event
+                  btnElement.addEventListener('click', (event) => {
+                    event.preventDefault();
 
-          if ($selectContainer.classList.contains('open')) {
-            $selectContainer.classList.remove('open');
-            $listContainer.style.height = '0';
-            $listContainer.setAttribute('tabindex', '-1');
-            event.target.parentNode.classList.remove('dropup');
-          } else {
-            $selectContainer.classList.add('open');
-            $listContainer.style.height = null;
-            $listContainer.setAttribute('tabindex', '0');
+                    if ($selectContainer.classList.contains('open')) {
+                      $selectContainer.classList.remove('open');
+                      $listContainer.style.height = '0';
+                      $listContainer.setAttribute('tabindex', '-1');
+                      event.target.parentNode.classList.remove('dropup');
+                      if (selectEl.querySelector('.naked-submit'))
+                        selectEl.querySelector('.naked-submit').setAttribute('tabindex', '-1');
+                    } else {
+                      $selectContainer.classList.add('open');
+                      $listContainer.style.height = null;
+                      $listContainer.setAttribute('tabindex', '0');
 
-            let windowHeight = window.innerHeight;
-            let scrollPosition = window.scrollY;
-            let btnPosition = window.scrollY + event.target.getBoundingClientRect().top + event.target.offsetHeight;
-            if (windowHeight - btnPosition + scrollPosition < dropupThreshold) {
-              event.target.parentNode.classList.add('dropup');
-              event.target.nextSibling.style.bottom = `${event.target.offsetHeight}px`;
-            }
+                      let windowHeight = window.innerHeight;
+                      let scrollPosition = window.scrollY;
+                      let btnPosition = window.scrollY + event.target.getBoundingClientRect().top + event.target.offsetHeight;
+                      if (windowHeight - btnPosition + scrollPosition < dropupThreshold) {
+                        event.target.parentNode.classList.add('dropup');
+                        event.target.nextSibling.style.bottom = `${event.target.offsetHeight}px`;
+                      }
+
+                      if (selectEl.querySelector('.naked-submit'))
+                        selectEl.querySelector('.naked-submit').setAttribute('tabindex', '0');
+                    }
+                  })
+                  selectEl.setAttribute('data-initialized', 'true');
+                }, interactive.globalClose())
           }
-        })
-      }, interactive.globalClose())
+      })
     },
     addValidationMessage: (select) => {
         if (!select.querySelector('.naked-form-select-wrap--error-message')) {
@@ -415,7 +426,7 @@
 
           if ($select.getAttribute('required')) {
               if ($select.selectedIndex !== 0)
-                  interactive.removeValidationMessage(document.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}']`));
+                  interactive.removeValidationMessage($source.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}']`));
           }
         })
       })
