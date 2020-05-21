@@ -1,4 +1,4 @@
-/* Naked Form Select v1.1.1 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.1.2 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
 
@@ -94,6 +94,7 @@
           // create unordered list with the options text
           let $listContainer = document.createElement('div');
           $listContainer.classList.add('options-wrap');
+          $listContainer.setAttribute('tabindex', '-1');
 
           let $list = document.createElement('ul');
           $list.setAttribute('data-naked-select-list', index);
@@ -241,7 +242,10 @@
             let openSelectIndexID = parseInt(selectArr[i].getAttribute('data-index'));
             let openSelectID = selectArr[i].getAttribute('data-naked-select-id');
             selectArr[i].classList.remove('open');
-            document.querySelector(`[data-naked-select-id='${openSelectID}'][data-index='${openSelectIndexID}'] .options-wrap`).style.height = '0';
+
+            const dropdown = document.querySelector(`[data-naked-select-id='${openSelectID}'][data-index='${openSelectIndexID}'] .options-wrap`);
+            dropdown.style.height = '0';
+            dropdown.setAttribute('tabindex', '-1');
             setTimeout(() => {
               selectArr[i].classList.remove('dropup');
             }, 255);
@@ -267,10 +271,12 @@
           if ($selectContainer.classList.contains('open')) {
             $selectContainer.classList.remove('open');
             $listContainer.style.height = '0';
+            $listContainer.setAttribute('tabindex', '-1');
             event.target.parentNode.classList.remove('dropup');
           } else {
             $selectContainer.classList.add('open');
             $listContainer.style.height = null;
+            $listContainer.setAttribute('tabindex', '0');
 
             let windowHeight = window.innerHeight;
             let scrollPosition = window.scrollY;
@@ -392,9 +398,11 @@
             if ($selectContainer.classList.contains('open')) {
               $selectContainer.classList.remove('open');
               $listContainer.style.height = '0';
+              $listContainer.setAttribute('tabindex', '-1');
             } else {
               $selectContainer.classList.add('open');
               $listContainer.style.height = null;
+              $listContainer.setAttribute('tabindex', '0');
             }
 
             // toggle selected class
