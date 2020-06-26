@@ -1,4 +1,4 @@
-/* Naked Form Select v1.1.4 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.1.5 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
 
@@ -16,7 +16,7 @@
   const build = {
     index: () => {
       let setIndex = () => {
-        $source.querySelectorAll('[data-naked-select-id]').forEach(($nakedContainer, index) => {
+        [...$source.querySelectorAll('[data-naked-select-id]')].forEach(($nakedContainer, index) => {
 
           $nakedContainer.setAttribute('data-index', index);
         })
@@ -61,7 +61,7 @@
       return $searchContainer;
     },
     lists: () => {
-      $source.querySelectorAll($targetSelector).forEach((selectElement, index) => {
+      [...$source.querySelectorAll($targetSelector)].forEach((selectElement, index) => {
         if (!selectElement.getAttribute('data-initialized')) {
 
           // get an array of the options
@@ -153,7 +153,7 @@
       })
     },
     currentState: () => {
-      $source.querySelectorAll(`${targetSelectorID}[data-naked-select] select`).forEach((select, index) => {
+      [...$source.querySelectorAll(`${targetSelectorID}[data-naked-select] select`)].forEach((select, index) => {
         if (!select.getAttribute('data-initialized')) {
 
           let siblings = Array.from(select.parentNode.childNodes);
@@ -255,9 +255,9 @@
       })
     },
     toggle: () => {
-      $source.querySelectorAll(`${targetSelectorID}[data-naked-select]`).forEach((selectEl) => {
+      [...$source.querySelectorAll(`${targetSelectorID}[data-naked-select]`)].forEach((selectEl) => {
           if (!selectEl.getAttribute('data-initialized')) {
-              selectEl.querySelectorAll('.toggle-dropdown').forEach((btnElement) => {
+              [...selectEl.querySelectorAll('.toggle-dropdown')].forEach((btnElement) => {
 
                   let index = btnElement.parentNode.getAttribute('data-naked-select');
 
@@ -335,7 +335,7 @@
     },
     select: () => {
 
-      $source.querySelectorAll(`${targetSelectorID}[data-naked-select] li`).forEach((listItem) => {
+      [...$source.querySelectorAll(`${targetSelectorID}[data-naked-select] li`)].forEach((listItem) => {
 
         listItem.addEventListener('click', () => {
 
@@ -417,7 +417,7 @@
             }
 
             // toggle selected class
-            $source.querySelectorAll(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] li`).forEach((li) => {li.classList.remove('selected')});
+            [...$source.querySelectorAll(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] li`)].forEach((li) => {li.classList.remove('selected')});
             listItem.classList.contains('selected') ? listItem.classList.remove('selected') : listItem.classList.add('selected');
 
             // update the placeholder text
@@ -434,11 +434,11 @@
     keywordSearch: () => {
       if (keywordSearch.on === true) {
 
-          $source.querySelectorAll(targetSelectorID).forEach(($container) => {
-          $container.setAttribute('keywordSearch', 'on');
-        })
-
-        $source.querySelectorAll($targetSelector).forEach((selectElement, index) => {
+          [...$source.querySelectorAll(targetSelectorID)].forEach(($container) => {
+            $container.setAttribute('keywordSearch', 'on');
+          });
+  
+          [...$source.querySelectorAll($targetSelector)].forEach((selectElement, index) => {
 
           // get an array of the options
           let optionsTextArr = [];
@@ -451,7 +451,7 @@
           let $list = selectElement.previousElementSibling.childNodes[1];
 
           // show all list items initially
-          let $listItem = $source.querySelectorAll(`[data-naked-select-id='${$targetSelector}'] .options-wrap li`);
+          let $listItem = [...$source.querySelectorAll(`[data-naked-select-id='${$targetSelector}'] .options-wrap li`)];
 
           $listItem.forEach(($li) => { $li.classList.add('match') })
 
