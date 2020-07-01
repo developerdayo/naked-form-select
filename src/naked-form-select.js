@@ -1,4 +1,4 @@
-/* Naked Form Select v1.1.5 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.1.6 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
 
@@ -321,17 +321,19 @@
     },
     validationError: (select) => {
       const form = select.closest('form');
-      const formSubmitBtn = form.querySelector('[type="submit"]');
+      if (form.querySelector('[type="submit"]')) {
+          const formSubmitBtn = form.querySelector('[type="submit"]');
 
-      formSubmitBtn.addEventListener('click', (e) => {
-          let nakedSelect = select.parentNode;
-
-          if (!select.checkValidity()) {
-              interactive.addValidationMessage(nakedSelect);
-          } else {
-              interactive.removeValidationMessage(nakedSelect);
-          }
-      })
+          formSubmitBtn.addEventListener('click', (e) => {
+              let nakedSelect = select.parentNode;
+    
+              if (!select.checkValidity()) {
+                  interactive.addValidationMessage(nakedSelect);
+              } else {
+                  interactive.removeValidationMessage(nakedSelect);
+              }
+          })
+      }
     },
     select: () => {
 
