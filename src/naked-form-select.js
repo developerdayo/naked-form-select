@@ -1,8 +1,27 @@
-/* Naked Form Select v1.1.6 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.1.7 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
-
- const nakedFormSelect = (target = 'select', { settings = { dropupThreshold: 50 }, context = { value: undefined, queryDocument: false }, keywordSearch = { on: false, placeholder: undefined }, submitBtn = { on: false, text: undefined } } = {}) => {
+ const nakedFormSelect = (target = 'select', {
+  events = {
+    open: undefined,
+    close: undefined
+  },
+  settings = {
+    dropupThreshold: 50,
+  },
+  context = {
+    value: undefined,
+    queryDocument: false
+  },
+  keywordSearch = {
+    on: false,
+    placeholder: undefined
+  },
+  submitBtn = {
+    on: false,
+    text: undefined
+  }
+} = {}) => {
 
   // in the context of Drupal, the context.queryDocument default value is not being set properly as defined above
   // therefore, the following ternary statement fixes it
@@ -12,6 +31,7 @@
   let $targetSelector;
   let targetSelectorID;
   let dropupThreshold = settings.dropupThreshold;
+  let passCallback = false;
 
   const build = {
     index: () => {
@@ -75,12 +95,14 @@
 
           let optionsTextArr = [];
 
-          options.forEach((option) => {optionsTextArr.push([option.index, option.textContent])});
+          options.forEach((option) => {
+            optionsTextArr.push([option.index, option.textContent])
+          });
 
           // create placeholder text
           let placeholderText;
 
-          if ( selectElement.getAttribute('data-label') === 'true') {
+          if (selectElement.getAttribute('data-label') === 'true') {
             placeholderText = dataLabel.textContent;
           } else {
             placeholderText = options[0].textContent;
@@ -165,14 +187,14 @@
             let selectedOptionsArr = Array.from(select.options).filter(option => option.selected === true);
 
             if (select.getAttribute('data-label') === 'true') {
-                selectedOptionsArr = selectedOptionsArr.filter(option => option.index !== 0);
+              selectedOptionsArr = selectedOptionsArr.filter(option => option.index !== 0);
             }
 
             let selectedIndex = select.options.selectedIndex;
 
             selectedOptionsArr.forEach((option) => {
-                select.previousElementSibling.querySelector(`li[data-index='${option.index}']`).classList.add('selected');
-             });
+              select.previousElementSibling.querySelector(`li[data-index='${option.index}']`).classList.add('selected');
+            });
 
             let keyword;
 
@@ -193,14 +215,14 @@
               $placeholderContainer.textContent = `${selectedOptionsArr.length} ${keyword} selected`;
             } else if (selectedOptionsArr.length > 1) {
 
-                // if using data-label and there's more than one
+              // if using data-label and there's more than one
               keyword = 'items';
               $placeholderContainer.textContent = `${selectedOptionsArr.length} ${keyword} selected`;
 
             } else {
 
-                keyword = 'items';
-                $placeholderContainer.textContent = select.options[selectedIndex].textContent;
+              keyword = 'items';
+              $placeholderContainer.textContent = select.options[selectedIndex].textContent;
 
             }
 
@@ -245,94 +267,116 @@
             selectArr[i].classList.remove('open');
 
             const dropdown = document.querySelector(`[data-naked-select-id='${openSelectID}'][data-index='${openSelectIndexID}'] .options-wrap`);
-            dropdown.style.height = '0';
             dropdown.setAttribute('tabindex', '-1');
             setTimeout(() => {
               selectArr[i].classList.remove('dropup');
             }, 255);
+
+            // optional callback
+            if (passCallback) {
+              events.close();
+            } else {
+              dropdown.style.height = '0';
+            }
           }
         }
       })
     },
     toggle: () => {
       [...$source.querySelectorAll(`${targetSelectorID}[data-naked-select]`)].forEach((selectEl) => {
-          if (!selectEl.getAttribute('data-initialized')) {
-              [...selectEl.querySelectorAll('.toggle-dropdown')].forEach((btnElement) => {
+        if (!selectEl.getAttribute('data-initialized')) {
 
-                  let index = btnElement.parentNode.getAttribute('data-naked-select');
+          [...selectEl.querySelectorAll('.toggle-dropdown')].forEach((btnElement) => {
 
-                  let $selectContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${index}']`);
-                  let $listContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .options-wrap`);
+            let index = btnElement.parentNode.getAttribute('data-naked-select');
 
-                  // get list container's initial height to create slide toggle effect with css' help
+            let $selectContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${index}']`);
+            let $listContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .options-wrap`);
+
+            // get list container's initial height to create slide toggle effect with css' help
+            $listContainer.style.height = '0';
+
+            // the slide toggle click event
+            btnElement.addEventListener('click', (event) => {
+              event.preventDefault();
+
+              if ($selectContainer.classList.contains('open')) {
+
+                $selectContainer.classList.remove('open');
+                $listContainer.setAttribute('tabindex', '-1');
+                event.target.parentNode.classList.remove('dropup');
+
+                if (selectEl.querySelector('.naked-submit')) selectEl.querySelector('.naked-submit').setAttribute('tabindex', '-1');
+
+                // optional callback
+                if (typeof events.close === 'function' && events.close) {
+                  events.close();
+                  passCallback = true;
+                } else {
                   $listContainer.style.height = '0';
+                };
 
-                  // the slide toggle click event
-                  btnElement.addEventListener('click', (event) => {
-                    event.preventDefault();
+              } else {
+                $selectContainer.classList.add('open');
+                $listContainer.setAttribute('tabindex', '0');
 
-                    if ($selectContainer.classList.contains('open')) {
-                      $selectContainer.classList.remove('open');
-                      $listContainer.style.height = '0';
-                      $listContainer.setAttribute('tabindex', '-1');
-                      event.target.parentNode.classList.remove('dropup');
-                      if (selectEl.querySelector('.naked-submit'))
-                        selectEl.querySelector('.naked-submit').setAttribute('tabindex', '-1');
-                    } else {
-                      $selectContainer.classList.add('open');
-                      $listContainer.style.height = null;
-                      $listContainer.setAttribute('tabindex', '0');
+                let windowHeight = window.innerHeight;
+                let scrollPosition = window.scrollY;
+                let btnPosition = window.scrollY + event.target.getBoundingClientRect().top + event.target.offsetHeight;
+                if (windowHeight - btnPosition + scrollPosition < dropupThreshold) {
+                  event.target.parentNode.classList.add('dropup');
+                  event.target.nextSibling.style.bottom = `${event.target.offsetHeight}px`;
+                }
 
-                      let windowHeight = window.innerHeight;
-                      let scrollPosition = window.scrollY;
-                      let btnPosition = window.scrollY + event.target.getBoundingClientRect().top + event.target.offsetHeight;
-                      if (windowHeight - btnPosition + scrollPosition < dropupThreshold) {
-                        event.target.parentNode.classList.add('dropup');
-                        event.target.nextSibling.style.bottom = `${event.target.offsetHeight}px`;
-                      }
+                if (selectEl.querySelector('.naked-submit')) selectEl.querySelector('.naked-submit').setAttribute('tabindex', '0');
 
-                      if (selectEl.querySelector('.naked-submit'))
-                        selectEl.querySelector('.naked-submit').setAttribute('tabindex', '0');
-                    }
-                  })
-                  selectEl.setAttribute('data-initialized', 'true');
-                }, interactive.globalClose())
-          }
+                // optional callback
+                if (typeof events.open === 'function' && events.open) {
+                  events.open();
+                  passCallback = true;
+                } else {
+                  $listContainer.style.height = null;
+                };
+              }
+            })
+            selectEl.setAttribute('data-initialized', 'true');
+          }, interactive.globalClose(passCallback))
+        }
       })
     },
     addValidationMessage: (select) => {
-        if (!select.querySelector('.naked-form-select-wrap--error-message')) {
-          select.classList.add('error');
+      if (!select.querySelector('.naked-form-select-wrap--error-message')) {
+        select.classList.add('error');
 
-          let errorMessage = document.createElement('div');
-          errorMessage.classList.add('naked-form-select-wrap--error-message');
-          errorMessage.textContent = 'Please make a selection';
+        let errorMessage = document.createElement('div');
+        errorMessage.classList.add('naked-form-select-wrap--error-message');
+        errorMessage.textContent = 'Please make a selection';
 
-          select.insertBefore(errorMessage, select.childNodes[0]);
-        }
+        select.insertBefore(errorMessage, select.childNodes[0]);
+      }
     },
     removeValidationMessage: (select) => {
       if (select.classList.contains('error')) {
-          select.classList.remove('error');
+        select.classList.remove('error');
 
-          let errorMessage = select.querySelector('.naked-form-select-wrap--error-message');
-          select.removeChild(errorMessage);
+        let errorMessage = select.querySelector('.naked-form-select-wrap--error-message');
+        select.removeChild(errorMessage);
       }
     },
     validationError: (select) => {
       const form = select.closest('form');
       if (form.querySelector('[type="submit"]')) {
-          const formSubmitBtn = form.querySelector('[type="submit"]');
+        const formSubmitBtn = form.querySelector('[type="submit"]');
 
-          formSubmitBtn.addEventListener('click', (e) => {
-              let nakedSelect = select.parentNode;
-    
-              if (!select.checkValidity()) {
-                  interactive.addValidationMessage(nakedSelect);
-              } else {
-                  interactive.removeValidationMessage(nakedSelect);
-              }
-          })
+        formSubmitBtn.addEventListener('click', (e) => {
+          let nakedSelect = select.parentNode;
+
+          if (!select.checkValidity()) {
+            interactive.addValidationMessage(nakedSelect);
+          } else {
+            interactive.removeValidationMessage(nakedSelect);
+          }
+        })
       }
     },
     select: () => {
@@ -419,7 +463,9 @@
             }
 
             // toggle selected class
-            [...$source.querySelectorAll(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] li`)].forEach((li) => {li.classList.remove('selected')});
+            [...$source.querySelectorAll(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] li`)].forEach((li) => {
+              li.classList.remove('selected')
+            });
             listItem.classList.contains('selected') ? listItem.classList.remove('selected') : listItem.classList.add('selected');
 
             // update the placeholder text
@@ -427,8 +473,8 @@
           }
 
           if ($select.getAttribute('required')) {
-              if ($select.selectedIndex !== 0)
-                  interactive.removeValidationMessage($source.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}']`));
+            if ($select.selectedIndex !== 0)
+              interactive.removeValidationMessage($source.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}']`));
           }
         })
       })
@@ -436,17 +482,19 @@
     keywordSearch: () => {
       if (keywordSearch.on === true) {
 
-          [...$source.querySelectorAll(targetSelectorID)].forEach(($container) => {
-            $container.setAttribute('keywordSearch', 'on');
-          });
-  
-          [...$source.querySelectorAll($targetSelector)].forEach((selectElement, index) => {
+        [...$source.querySelectorAll(targetSelectorID)].forEach(($container) => {
+          $container.setAttribute('keywordSearch', 'on');
+        });
+
+        [...$source.querySelectorAll($targetSelector)].forEach((selectElement, index) => {
 
           // get an array of the options
           let optionsTextArr = [];
           let options = Array.from(selectElement.childNodes).filter(option => option.nodeName === 'OPTION');
 
-          options.forEach((option) => {optionsTextArr.push(option.textContent)});
+          options.forEach((option) => {
+            optionsTextArr.push(option.textContent)
+          });
 
           // create event to compare the entered value and filter the array of select options by matching substring
           let $input = selectElement.previousElementSibling.childNodes[0].childNodes[0];
@@ -455,7 +503,9 @@
           // show all list items initially
           let $listItem = [...$source.querySelectorAll(`[data-naked-select-id='${$targetSelector}'] .options-wrap li`)];
 
-          $listItem.forEach(($li) => { $li.classList.add('match') })
+          $listItem.forEach(($li) => {
+            $li.classList.add('match')
+          })
 
           $input.addEventListener('input', (e) => {
 
@@ -464,7 +514,7 @@
             let filteredResultsArr = options.filter((option) => {
               let lowercase = option.textContent.toLowerCase();
               if (lowercase.match(enteredValue)) {
-                  return option;
+                return option;
               }
             })
 
@@ -484,6 +534,7 @@
 
             // update options-wrap height
             $source.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .options-wrap`).style.height = null;
+
           })
         })
       }
@@ -491,11 +542,11 @@
   }
 
   if (context.value !== undefined && context.queryDocument === false) {
-      $source = context.value;
+    $source = context.value;
   } else if (context.value !== undefined && context.queryDocument === true) {
-      $source = document.querySelector(context.value);
+    $source = document.querySelector(context.value);
   } else {
-      $source = document;
+    $source = document;
   }
 
   $targetSelector = target;
@@ -509,4 +560,4 @@
 
 }
 
-module.exports = nakedFormSelect;
+if (typeof module !== 'undefined') module.exports = nakedFormSelect;

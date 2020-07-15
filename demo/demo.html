@@ -12,88 +12,415 @@
     <link rel="stylesheet" href="demo.css" type="text/css">
 </head>
 <body>
-    <h1>Styled Form Select</h1>
-    <h2>Single Select</h2>
-    <form id="testForm">
-        <select class="normal example-1" name="select1">
-            <option value="none">Make a selection from Single Select Dropdown</option>
-            <option value="option1:1" selected>Option1 : 1</option>
-            <option value="option1:2">Option1 : 2</option>
-            <option value="option1:3">Option1 : 3</option>
-            <option value="option1:4">Option1 : 4</option>
-            <option value="option1:5">Option1 : 5</option>
-        </select>
-        <h2>Utilizes Modified Label (data-label attribute)</h2>
-        <select class="normal example-1" name="select2" data-label="true">
-            <option value="I'm a custom label">I'm a custom label</option>
-            <option value="option1:1">Option1 : 1</option>
-            <option value="option1:2">Option1 : 2</option>
-            <option value="option1:3">Option1 : 3</option>
-            <option value="option1:4">Option1 : 4</option>
-            <option value="option1:5">Option1 : 5</option>
-        </select>
-        <h2>Multiple Select</h2>
-        <select class="normal example-1" name="select3" multiple>
-            <option value="none">Make a selection from Multiple Select Dropdown</option>
-            <option value="option2:1">Option2 : 1</option>
-            <option value="option2:2">Option2 : 2</option>
-            <option value="option2:3">Option2 : 3</option>
-            <option value="option2:4">Option2 : 4</option>
-            <option value="option2:5">Option2 : 5</option>
-        </select>
-        <h2>Multiple Select Utilizes Modified Label (data-label attribute); Utilizes submitBtn option</h2>
-        <p>If you add <strong>data-label="true"</strong> on your <strong>select</strong>, it will exclude the first option from the dropdown list.</p>
-        <select class="normal example-2" name="select3" data-label="true" multiple>
-            <option value="I'm a data-label on a multiple select">I'm a data-label on a multiple select</option>
-            <option value="option2:1">Option2 : 1</option>
-            <option value="option2:2">Option2 : 2</option>
-            <option value="option2:3">Option2 : 3</option>
-            <option value="option2:4">Option2 : 4</option>
-            <option value="option2:5">Option2 : 5</option>
-        </select>
-        <h2>Multiple Select With Modified Keyword Verbiage (data-multiple-keyword attribute)</h2>
-        <span>When more than 1 option is selected, the default verbiage is 'x items selected'. This example showcases when the keyword 'item' is modified to 'donut' for example</span>
-        <select class="normal example-1" name="select4" data-multiple-keyword="donut" multiple>
-            <option value="none">Donut</option>
-            <option value="option2:1">Donut : 1</option>
-            <option value="option2:2">Donut : 2</option>
-            <option value="option2:3">Donut : 3</option>
-            <option value="option2:4">Donut : 4</option>
-            <option value="option2:5">Donut : 5</option>
-        </select>
-        <h2>Multiple Select With Modified Keyword Verbiage (data-multiple-keyword attribute) - DON'T PLURALIZE</h2>
-        <span>When more than 1 option is selected, the default verbiage is 'x items selected'. This example showcases when the keyword 'item' is modified to 'donut' for example</span>
-        <select class="normal example-1" name="select4" data-multiple-keyword="specialties" data-pluralize="false" multiple>
-            <option value="none">Specialties</option>
-            <option value="option2:1">Option2 : 1</option>
-            <option value="option2:2">Option2 : 2</option>
-            <option value="option2:3">Option2 : 3</option>
-            <option value="option2:4" selected>Option2 : 4</option>
-            <option value="option2:5" selected>Option2 : 5</option>
-        </select>
-        <h2>Select with predictive search</h2>
-        <span>In this demo, I've also modified the dropup threshold to 100px's. Dropup threshold indicates how many pixels away from the bottom of the window height can the dropdown button be before the dropdown list drops upwards instead of down.</span>
-        <select class="keyword-search example-3" name="select5">
-            <option value="none">Make a selection from Keyword Search Dropdown</option>
-            <option value="option3:1">Option3 : 1</option>
-            <option value="option3:2" selected>Option3 : 2</option>
-            <option value="option3:3">Option3 : 3</option>
-            <option value="option3:4">Option3 : 4</option>
-            <option value="option3:5">Option3 : 5</option>
-        </select>
-        <h2>Select within context parameter</h2>
-        <div class="section-with-context">
-            <select class="example-4" name="select6">
-                <option value="none">Make a selection from Dropdown with Context Parameter</option>
-                <option value="option2:1">Option2 : 1</option>
-                <option value="option2:2">Option2 : 2</option>
-                <option value="option2:3">Option2 : 3</option>
-                <option value="option2:4">Option2 : 4</option>
-                <option value="option2:5">Option2 : 5</option>
-            </select>
-        </div>
-        <button type="submit" id="submitForm">Submit Form</button>
-    </form>
-    <div id="formResults"></div>
+    <div class="container">
+
+        <!-- menu -->
+        <h1>Naked Form Select Documentation</h1>
+        <nav>
+            <h2>Options</h2>
+            <ul>
+                <li><a href="#options--context">Context</a></li>
+                <li><a href="#options--events">Events</a></li>
+                <li><a href="#options--keyword-search">Keyword Search</a></li>
+                <li><a href="#options--settings">Settings</a></li>
+                <li><a href="#options--submit-button">Submit Button</a></li>
+                <li>
+                    <h3>Data Attribute Options</h3>
+                    <ul>
+                        <li><a href="#options--data-attributes--data-label">data-label</a></li>
+                        <li><a href="#options--data-attributes--data-multiple-keyword">data-multiple-keyword/data-pluralize</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <h2>Demos</h2>
+            <ul>
+                <li><a href="#demos--single-selects">Single Selects</a></li>
+                <li><a href="#demos--multiple-selects">Multiple Selects</a></li>
+                <li><a href="#demos--context">Context</a></li>
+                <li><a href="#demos--events">Events</a></li>
+                <li><a href="#demos--keyword-search">Keyword Search</a></li>
+                <li><a href="#demos--settings">Settings</a></li>
+                <li><a href="#demos--submit-button">Submit Button</a></li>
+                <h3>Data Attribute Options</h3>
+                <ul>
+                    <li><a href="#demos--data-attributes--data-label">data-label</a></li>
+                    <li><a href="#demos--data-attributes--data-multiple-keyword">data-multiple-keyword/data-pluralize</a></li>
+                </ul>
+            </ul>
+        </nav>
+
+
+        <main>
+            <!-- options section -->
+            <section class="options">
+
+                <h2>Options</h2>
+
+                <!-- options section : context -->
+                <section class="options--context">
+                    <h3><a name="options--context">Context</a></h3>
+                    <p><code>nakedFormSelect</code> requirements one thing of you and thats to pass in an argument which should be the selector for the <code>select</code> you want to initialize the library on.</p> 
+                    <p>For example, if the dom element you are targeting is <code>.my-selector</code>, you initialize it with <code>nakedFormSelector('.my-selector')</code>.</p>
+                    <p>Behind the scenes, the library queries <code>[...document.querySelectorAll('.my-selector')]</code>.</p>
+                    <p>But what if you don't want to query your selector at <code>document</code>? Thats where the <code>context.value</code> option comes into play. This can be particularly useful if you're getting some ajax data back (such is the case in lets say Drupal).</p>
+                    <p>Lets continue to pretend you want to initialize the library on <code>.my-selector</code> but only in the context of some data you're back from an object called <code>newData</code>:</p>
+                    <code class="block">
+                        nakedFormSelect('.my-selector', {
+                            <span>context: {
+                                <span>value: newData</span>
+                            }</span>
+                        })
+                    </code>
+                    <p>This will result in <code>myData.querySelector('.my-selector')</code>.</p>
+                    <p>One more example–I mentioned Drupal earlier and admittedly, I built this feature mainly to service my needs in Drupal projects I work on. I can use this in Drupal Behaviors like:</p>
+                    <code class="block">
+                        Drupal.behaviors.myModule = {
+                            <span>
+                            attach: function(context, settings) {
+                              <span>
+                              nakedFormSelect('.my-selector', {
+                                  <span>
+                                  context: {
+                                      <span>value: context</span>
+                                  }
+                                </span>
+                              })
+                            </span>
+                            }
+                            </span>
+                        }
+                    </code>
+                    <p>...and this will query <code>context.querySelectorAll('.my-selector')</code>.</p>
+                    <a href="#demos--context" class="more">Context example</a>
+                </section>
+
+                <!-- options section : events -->
+                <section class="options--events">
+                    <h3><a name="options--events">Events</a></h3>
+                    <p>The events option lets you pass in callbacks for certain events during <code>nakedFormSelect</code></p>
+                    <p>Currently, you can perform callbacks during:</p>
+                    <ul>
+                        <li><code>events.close</code> : this happens when the dropdown is closed</li>
+                        <li><code>events.open</code> : this happens when the dropdown is opened</li>
+                    </ul>
+                    <h4>Usage</h4>
+                    <p>Lets pretend your callback that you want to use when the <code>nakedFormSelect</code> closes is called <code>closeDropdown()</code> and when it opens, you have a callback function called <code>closeDropdown()</code>. If the callback does not require any arguments to be passed to it, you'd use it like the following:</p>
+                    <code class="block">
+                        nakedFormSelect('select'), {
+                            <span>events: {
+                                <span>close: openDropdown,</span>
+                                <span>open: closeDropdown</span>
+                            }
+                            </span>
+                        });
+                    </code>
+                    <p>Now, in the scenario in which you do have arguments you want to pass to your callback, you'd pass your callback into an anonymous function first like the following:</p>
+                    <code class="block">
+                        nakedFormSelect('select'), {
+                            <span>events: {
+                                <span>close: () => closeDropdown(arg),</span>
+                                <span>open: () => closeDropdown(arg)</span>
+                            }
+                            </span>
+                        });
+                    </code>
+                    <small>Note: Of course, there are many ways you can write an anonymous function, we're being as brief as possible like proper mad lads.</small>
+                    <h4>Why?</h4>
+                    <p>In the spirit of being as verbose as possible, in case if you're not seeing why you would need callbacks, I'll raise an example'.</p>
+                    <p>The first thing that comes to mind is that I built <code>nakedFormSelect</code> to be as barebones in terms of subjective aesthetics as possible (hence, like, 5 lines of css thats included in the <code>dist</code> folder).</p>
+                    <p>So, I don't provide a means of animating the open/close action of the dropdown. Therefore, you may want to add callbacks to handle that. The team I'm on likes to use gsap so I've used this option to animate the dropdowns with gsap.</p>
+                    <p>Here's an example of how you might use gsap to animate the open/close of <code>nakedFormSelect</code></p>
+                    <code class="block">
+                        const toggleAnimation = (selector, heightSize) =>
+                            <span>gsap.to(`[data-naked-select-id="${selector}"] .options-wrap`, { duration: .2, height: heightSize });</span>
+
+                            <br />
+                    
+                        nakedFormSelect('select', {
+                          <span>
+                            events: {
+                                <span>open: () => toggleAnimation('select', 'auto'),</span>
+                                <span>close: () => toggleAnimation('select', 0)</span>
+                            }
+                           </span>
+                        });
+                    </code>
+                    <a href="#demos--events" class="more">Events example</a>
+                </section>
+                
+                <!-- options section : Keyword Search -->
+                <section class="options--keyword-search">
+                    <h3><a name="options--keyword-search">Keyword Search</a></h3>
+                    <p>Keyword search adds an input field to the dropdown in which you can type characters that will filter the list of dropdown items. It has the following options:</p>
+                    <ul>
+                        <li><code>keywordSearch.on</code>: accepts a boolean value. It is set to <code>false</code> by default</li>
+                        <li><code>keywordSearch.placeholder</code>: accepts a string. This will set the <code>placeholder</code> value on the keyword search input field.</li>
+                    </ul>
+    
+                    <a href="#demos--keyword-search" class="more">Keyword Search Demo</a>.
+                </section>
+
+                <!-- options section : Settings -->
+                <section class="options--settings">
+                    <h3><a name="options--settings">Settings</a></h3>
+                    <p>Currently, there is only one setting option available:</p>
+                    <ul>
+                        <li><code>settings.dropupThreshold</code>: accepts an integer. Default set to 50</li>
+                    </ul>
+                    <p>This feature allows you to determines how many pixels from the bottom of the window height until the dropdown <em>drops up</em> (versus dropping down as usual).</p>
+                    <a href="#demos--keyword-search" class="more">Settings demo</a>.
+                </section>
+
+                <!-- options section : Submit Button -->
+                <section class="options--submit-button">
+                    <h3><a name="options--submit-button">Submit Button</a></h3>
+                    <p>This option will add a <code>button</code> inside the dropdown.</p>
+                    <p>There are multiple options avaialble in the submit button option:</p>
+                    <ul>
+                        <li><code>submitBtn.on</code>: accepts a boolean. Is false by default.</li>
+                        <li><code>submitBtn.text</code>: accepts a string. Is undefined by default. This will set the text value on the <code>button</code>. If <code>submitBtn.on: true</code> but you leave this undefined, it defaults to the text <em>Submit</em></li>
+                    </ul>
+                    <a href="#demos--submit-button" class="more">Submit Button demo</a>.
+                </section>
+
+                <!-- options section - data attributes : data-label -->
+                <section class="options--data-attributes--data-label">
+                    <h3><a name="options--data-attributes--data-label">data-label</a></h3>
+                    <p>In some unique cases, you may want to use the first option in a select as a label as opposed to a selectable option. In addition, you may not want this <em>label</em> to show up in the drop down at all.</p>
+                    <p>You can use <code>data-label="true"</code> on the <code>select</code> to opt into this option.</p>
+                    <a href="#demos--data-attributes--data-label" class="more">data-label demo</a>.
+                </section>
+
+                <!-- options section - data attributes : data-multiple-keyword/data-pluralize -->
+                <section class="options--data-attributes--data-multiple-keyword">
+                    <h3><a name="options--data-attributes--data-multiple-keyword">data-multiple-keyword/data-pluralize</a></h3>
+                    <p>When using the library on a <code>&lt;select multiple&gt;&lt;/select&gt;</code>, by default, after you select more than 1 option, the label of the select takes on the verbiage of <em>x Items selected</em> (x = item count).</p>
+                    <p>However, if you want to change the keyword <em>Item</em> to something else, you can with the <code>data-multiple-keyword</code> data attribute.</p>
+                    <h4>Usage</h4>
+                    <p>Lets say that you want your select to say 'x Hamburgers selected' instead of the default:</p>
+                    <code class="block">&lt;select data-multiple-keyword="Hamburger"&gt;&lt;/select&gt;</code>
+                    <p>This option will automatically pluralize the value you pass in. So in this case, if you have 2 options selected, it will say '2 Hamburgers selected'.</p>
+                    <p>If you do not want the library to automatically pluralize your keyword, simply add <code>data-pluralize="false"</code> to your <code>select</code> element as well. By default, <code>data-pluralization</code> is set to <code>true</code></p>
+                    <p>So, an example select utilizing data-multiple-keyword with <code>data-pluralization</code> turned off would be:</p>
+                    <code class="block">
+                        <code>&lt;select data-multiple-keyword="specialties" data-pluralize="false"&gt;&lt;/select&gt;</code>
+                    </code>
+                    <a href="#demos--data-attributes--data-multiple-keyword" class="more">data-multiple-keyword/data-pluralize demo</a>.
+                </section>
+
+            </section>
+
+            <!-- demos section -->
+            <section class="demos">
+                <form id="testForm">
+                    <!-- demos section : single select -->
+                    <section class="demos--single-selects demos--regular-select">
+                        <h2><a name="demos--single-selects">Single Select</a></h2>
+                        <select name="demos--single-selects">
+                            <option value="none" selected>Single select example</option>
+                            <option value="option1:1">Option1 : 1</option>
+                            <option value="option1:2">Option1 : 2</option>
+                            <option value="option1:3">Option1 : 3</option>
+                            <option value="option1:4">Option1 : 4</option>
+                            <option value="option1:5">Option1 : 5</option>
+                        </select>
+                        <h4>Javascript</h4>
+                        <code>
+                            nakedFormSelect('select');
+                        </code>
+                    </section>
+
+                    <!-- demos section : multiple select -->
+                    <section class="demos--single-selects demos--regular-select">
+                        <h2><a name="demos--multiple-selects">Multiple Select</a></h2>
+                        <select name="demos--multiple-selects" multiple>
+                            <option value="none">Multiple select example</option>
+                            <option value="option2:1">Option2 : 1</option>
+                            <option value="option2:2">Option2 : 2</option>
+                            <option value="option2:3">Option2 : 3</option>
+                            <option value="option2:4">Option2 : 4</option>
+                            <option value="option2:5">Option2 : 5</option>
+                        </select>
+                        <h4>Javascript</h4>
+                        <code>
+                            nakedFormSelect('select');
+                        </code>
+                        <h4>HTML</h4>
+                        <code>&lt;select multiple&gt;&lt;/select&gt;</code>
+                    </section>
+
+                    <!-- demos section: context -->
+                    <section class="demos--context">
+                        <h3><a name="demos--context">Context</a></h3>
+                        <select name="demos--context">
+                            <option value="none">Context Example</option>
+                            <option value="option3:1" selected>Option3 : 1</option>
+                            <option value="option3:2">Option3 : 2</option>
+                            <option value="option3:3">Option3 : 3</option>
+                            <option value="option3:4">Option3 : 4</option>
+                            <option value="option3:5">Option3 : 5</option>
+                        </select>
+                        <code class="block">
+                            nakedFormSelect('select', {
+                                <span>
+                                    context: {
+                                    <span>value: '.demos--context',</span>
+                                    <span>queryDocument: true</span>
+                                }
+                                </span>
+                            });
+                        </code>
+                        <a href="#options--context" class="more">Context documentation</a>
+                    </section>
+
+                    <!-- demos section: events -->
+                    <section class="demos--events">
+                        <h3><a name="demos--events">Events</a></h3>
+                        <select name="demos--events">
+                            <option value="none">Events Example</option>
+                            <option value="option3:1" selected>Option3 : 1</option>
+                            <option value="option3:2">Option3 : 2</option>
+                            <option value="option3:3">Option3 : 3</option>
+                            <option value="option3:4">Option3 : 4</option>
+                            <option value="option3:5">Option3 : 5</option>
+                        </select>
+                        <code class="block">
+                            nakedFormSelect('.demos--events select', {
+                                <span>
+                                events: {
+                                    <span>open: openDropdown,</span>
+                                    <span>close: closeDropdown</span>
+                                }
+                                </span>
+                            });
+                        </code>
+                        <a href="#options--events" class="more">Events documentation</a>
+                    </section>
+
+                    <!-- demos section : keyword search -->
+                    <section class="demos--keyword-search">
+                        <h3><a name="demos--keyword-search">Keyword Search</a></h3>
+                        <select name="demos--keyword-search">
+                            <option value="none" selected>keywordSearch Example</option>
+                            <option value="option3:1">Option3 : 1</option>
+                            <option value="option3:2">Option3 : 2</option>
+                            <option value="option3:3">Option3 : 3</option>
+                            <option value="option3:4">Option3 : 4</option>
+                            <option value="option3:5">Option3 : 5</option>
+                        </select>
+                        <code class="block">
+                            nakedFormSelect('.demos--keyword-search select', {
+                                <span>
+                                keywordSearch: {
+                                  <span>on: true,</span>
+                                  <span>placeholder: 'Type in some characters to filter this list'</span>
+                                }
+                            </span>
+                            });
+                        </code>
+                        <a href="#options--keyword-search" class="more">Keyword Search documentation</a>
+                    </section>
+
+                    <!-- demos section: settings -->
+                    <section class="demos--settings">
+                        <h3><a name="demos--settings">Settings</a></h3>
+                        <select name="demos--settings">
+                            <option value="none">settings.dropupThreshold Example</option>
+                            <option value="option3:1" selected>Option3 : 1</option>
+                            <option value="option3:2">Option3 : 2</option>
+                            <option value="option3:3">Option3 : 3</option>
+                            <option value="option3:4">Option3 : 4</option>
+                            <option value="option3:5">Option3 : 5</option>
+                        </select>
+                        <code class="block">
+                            nakedFormSelect('.demos--settings select', {
+                                <span>
+                                settings: {
+                                  <span>dropupThreshold: 300,</span>
+                                }
+                            </span>
+                            });
+                        </code>
+                        <a href="#options--settings" class="more">Settings documentation</a>
+                    </section>
+
+                    <!-- demos section: submit button -->
+                    <section class="demos--submit-button">
+                        <h3><a name="demos--submit-button">Submit Button</a></h3>
+                        <select name="demos--submit-button">
+                            <option value="none" selected>Submit Button Example</option>
+                            <option value="option3:1">Option3 : 1</option>
+                            <option value="option3:2">Option3 : 2</option>
+                            <option value="option3:3">Option3 : 3</option>
+                            <option value="option3:4">Option3 : 4</option>
+                            <option value="option3:5">Option3 : 5</option>
+                        </select>
+                        <code class="block">
+                            nakedFormSelect('.demos--submit-button select', {
+                                <span>
+                                submitBtn: {
+                                  <span>on: true,</span>
+                                  <span>text: 'fire!'</span>
+                                }
+                            </span>
+                            });
+                        </code>
+                        <a href="#options--submit-button" class="more">Submit Button documentation</a>
+                    </section>
+
+                    <!-- demos section - data attributes: data-label -->
+                    <section class="demos--data-attributes--data-label demos--regular-select">
+                        <h3><a name="demos--data-attributes--data-label">data-label</a></h3>
+                        <select name="demos--data-attributes--data-label" data-label="true">
+                            <option value="none" selected>data-label example</option>
+                            <option value="option3:1">Option3 : 1</option>
+                            <option value="option3:2">Option3 : 2</option>
+                            <option value="option3:3">Option3 : 3</option>
+                            <option value="option3:4">Option3 : 4</option>
+                            <option value="option3:5">Option3 : 5</option>
+                        </select>
+                        <h4>HTML</h4>
+                        <code class="block">&lt;select data-label="true"&gt;&lt;/select&gt;</code>
+                        <a href="#options--data-attributes--data-label" class="more">data-label documentation</a>
+                    </section>
+
+                    <!-- demos section - data attributes : data-multiple-keyword/data-pluralize -->
+                    <section class="demos--data-attributes--data-multiple-keyword demos--regular-select">
+                        <h3><a name="demos--data-attributes--data-multiple-keyword">data-multiple-keyword/data-pluralize</a></h3>
+                        <h4>data-pluralization turned off</h4>
+                        <select name="demos--data-attributes--data-multiple-keyword1" data-multiple-keyword="specialties" data-pluralize="false" multiple>
+                            <option value="none">Specialties</option>
+                            <option value="option2:1" selected>Option2 : 1</option>
+                            <option value="option2:2">Option2 : 2</option>
+                            <option value="option2:3">Option2 : 3</option>
+                            <option value="option2:4">Option2 : 4</option>
+                            <option value="option2:5">Option2 : 5</option>
+                        </select>
+                        <h5>HTML</h5>
+                        <code class="block">
+                            <code>&lt;select data-multiple-keyword="specialties" data-pluralize="false"&gt;&lt;/select&gt;</code>
+                        </code>
+                        <h4>data-pluralization turned on</h4>
+                        <select name="demos--data-attributes--data-multiple-keyword2" data-multiple-keyword="hamburger" multiple>
+                            <option value="none">Hamburger</option>
+                            <option value="option2:1" selected>Option2 : 1</option>
+                            <option value="option2:2">Option2 : 2</option>
+                            <option value="option2:3">Option2 : 3</option>
+                            <option value="option2:4">Option2 : 4</option>
+                            <option value="option2:5">Option2 : 5</option>
+                        </select>
+                        <h5>HTML</h5>
+                        <code class="block">
+                            <code>&lt;select data-multiple-keyword="hamburger"&gt;&lt;/select&gt;</code>
+                        </code>
+                        <a href="#options--data-attributes--data-multiple-keyword" class="more">data-multiple-keyword/data-pluralize documentation</a>
+                    </section>
+
+                    <button type="submit" id="submitForm">Submit Form</button>
+                </form>
+                <div id="formResults"></div>
+            </section>
+        </main>
+    </div>
 </body>
 </html>
