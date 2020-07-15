@@ -1,4 +1,4 @@
-/* Naked Form Select v1.1.7 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.1.8 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
  const nakedFormSelect = (target = 'select', {
@@ -31,7 +31,6 @@
   let $targetSelector;
   let targetSelectorID;
   let dropupThreshold = settings.dropupThreshold;
-  let passCallback = false;
 
   const build = {
     index: () => {
@@ -255,31 +254,28 @@
     },
     globalClose: () => {
       // close all dropdowns when clicked outside of select
-      document.querySelector('body').addEventListener('click', (element) => {
+      document.querySelector('body').addEventListener('click', (e) => {
 
         let selectArr = Array.from(document.querySelectorAll('[data-naked-select]'));
+        selectArr = selectArr.filter(item => item.classList.contains('open') && !item.contains(e.target));
 
-        for (let i = 0; i < selectArr.length; i++) {
-          if (selectArr[i].classList.contains('open') && !selectArr[i].contains(element.target)) {
+        selectArr.forEach(select => {
+            let openSelectIndexID = parseInt(select.getAttribute('data-index'));
+            let openSelectID = select.getAttribute('data-naked-select-id');
 
-            let openSelectIndexID = parseInt(selectArr[i].getAttribute('data-index'));
-            let openSelectID = selectArr[i].getAttribute('data-naked-select-id');
-            selectArr[i].classList.remove('open');
+            select.classList.remove('open');
 
             const dropdown = document.querySelector(`[data-naked-select-id='${openSelectID}'][data-index='${openSelectIndexID}'] .options-wrap`);
+
             dropdown.setAttribute('tabindex', '-1');
+
             setTimeout(() => {
-              selectArr[i].classList.remove('dropup');
+              select.classList.remove('dropup');
             }, 255);
 
-            // optional callback
-            if (passCallback) {
-              events.close();
-            } else {
-              dropdown.style.height = '0';
-            }
-          }
-        }
+            dropdown.style.height = '0';
+        })
+
       })
     },
     toggle: () => {
@@ -311,7 +307,6 @@
                 // optional callback
                 if (typeof events.close === 'function' && events.close) {
                   events.close();
-                  passCallback = true;
                 } else {
                   $listContainer.style.height = '0';
                 };
@@ -333,14 +328,13 @@
                 // optional callback
                 if (typeof events.open === 'function' && events.open) {
                   events.open();
-                  passCallback = true;
                 } else {
                   $listContainer.style.height = null;
                 };
               }
             })
             selectEl.setAttribute('data-initialized', 'true');
-          }, interactive.globalClose(passCallback))
+          }, interactive.globalClose())
         }
       })
     },
