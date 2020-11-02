@@ -1,4 +1,4 @@
-/* Naked Form Select v1.1.9 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.2.0 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
  const nakedFormSelect = (target = 'select', {
@@ -128,6 +128,7 @@
             let item = document.createElement('li');
 
             item.setAttribute('data-index', listItem[0]);
+            item.setAttribute('tabindex', '0');
 
             item.appendChild(document.createTextNode(listItem[1]));
 
@@ -256,86 +257,115 @@
       // close all dropdowns when clicked outside of select
       document.querySelector('body').addEventListener('click', (e) => {
 
-        let selectArr = Array.from(document.querySelectorAll('[data-naked-select]'));
-        selectArr = selectArr.filter(item => item.classList.contains('open') && !item.contains(e.target));
-
-        selectArr.forEach(select => {
-            let openSelectIndexID = parseInt(select.getAttribute('data-index'));
-            let openSelectID = select.getAttribute('data-naked-select-id');
-
-            select.classList.remove('open');
-
-            const dropdown = document.querySelector(`[data-naked-select-id='${openSelectID}'][data-index='${openSelectIndexID}'] .options-wrap`);
-
-            dropdown.setAttribute('tabindex', '-1');
-
-            setTimeout(() => {
-              select.classList.remove('dropup');
-            }, 255);
-
-            dropdown.style.height = '0';
-        })
-
+        if (!events.close) {
+          let selectArr = [...document.querySelectorAll('[data-naked-select]')].filter(item => !item.contains(e.target));
+          selectArr.forEach(select => {
+  
+              select.classList.remove('open');
+  
+              const dropdown = select.querySelector('.options-wrap');
+  
+              dropdown.setAttribute('tabindex', '-1');
+  
+              setTimeout(() => {
+                  select.classList.remove('dropup');
+              }, 255);
+  
+              dropdown.style.height = '0';
+          })
+        }
       })
     },
-    toggle: () => {
+    toggle: eventType => {
       [...$source.querySelectorAll(`${targetSelectorID}[data-naked-select]`)].forEach((selectEl) => {
-        if (!selectEl.getAttribute('data-initialized')) {
+        [...selectEl.querySelectorAll('.toggle-dropdown')].forEach((btnElement) => {
 
-          [...selectEl.querySelectorAll('.toggle-dropdown')].forEach((btnElement) => {
+          let index = btnElement.parentNode.getAttribute('data-naked-select');
+          let $selectContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${index}']`);
+          let $listContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .options-wrap`);
 
-            let index = btnElement.parentNode.getAttribute('data-naked-select');
+          selectEl.setAttribute('data-keydown-event', 'initialized');
+          selectEl.setAttribute('data-click-event', 'initialized');
 
-            let $selectContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${index}']`);
-            let $listContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${index}'] .options-wrap`);
+          // get list container's initial height to create slide toggle effect with css' help
+          $listContainer.style.height = '0';
 
-            // get list container's initial height to create slide toggle effect with css' help
-            $listContainer.style.height = '0';
+          // the slide toggle click event
+          btnElement.addEventListener(eventType, event => {
 
-            // the slide toggle click event
-            btnElement.addEventListener('click', (event) => {
+            const open = () => {
+              $selectContainer.classList.add('open');
+              $listContainer.setAttribute('tabindex', '0');
+
+              let windowHeight = window.innerHeight;
+              let scrollPosition = window.scrollY;
+              let btnPosition = window.scrollY + event.target.getBoundingClientRect().top + event.target.offsetHeight;
+              if (windowHeight - btnPosition + scrollPosition < dropupThreshold) {
+                event.target.parentNode.classList.add('dropup');
+                event.target.nextSibling.style.bottom = `${event.target.offsetHeight}px`;
+              }
+
+              if (selectEl.querySelector('.naked-submit')) selectEl.querySelector('.naked-submit').setAttribute('tabindex', '0');
+
+              // optional callback
+              if (typeof events.open === 'function' && events.open) {
+                events.open($listContainer);
+              } else {
+                $listContainer.style.height = null;
+              };
+            }
+
+            const close = () => {
+              $selectContainer.classList.remove('open');
+              $listContainer.setAttribute('tabindex', '-1');
+              event.target.parentNode.classList.remove('dropup');
+
+              if (selectEl.querySelector('.naked-submit')) selectEl.querySelector('.naked-submit').setAttribute('tabindex', '-1');
+
+              // optional callback
+              if (typeof events.close === 'function' && events.close) {
+                events.close($listContainer);
+              } else {
+                $listContainer.style.height = '0';
+              };
+            }
+
+            if (eventType === 'keydown') {
+
+              const DOWN_ARROW_KEY_CODE = 40;
+              const SPACEBAR_KEY_CODE = [0, 32];
+              const ENTER_KEY_CODE = 13;
+              const UP_ARROW_KEY_CODE = 38;
+              const ESCAPE_KEY_CODE = 27;
+
+              if (event.keyCode === SPACEBAR_KEY_CODE) {
+
+                open();
+
+              } else if (event.keyCode === DOWN_ARROW_KEY_CODE) {
+
+                const currentActiveElementIndex = listItemIds.indexOf(activeElementId);
+                const currentActiveElementIsNotLastItem = currentActiveElementIndex < listItemIds.length - 1;
+
+                currentActiveElementIsNotLastItem.querySelector('ul li:first-child').focus();
+
+              } else if (event.keyCode === ESCAPE_KEY_CODE) {
+                close();
+              }
+
+            } else if (eventType === 'click') {
               event.preventDefault();
 
               if ($selectContainer.classList.contains('open')) {
-
-                $selectContainer.classList.remove('open');
-                $listContainer.setAttribute('tabindex', '-1');
-                event.target.parentNode.classList.remove('dropup');
-
-                if (selectEl.querySelector('.naked-submit')) selectEl.querySelector('.naked-submit').setAttribute('tabindex', '-1');
-
-                // optional callback
-                if (typeof events.close === 'function' && events.close) {
-                  events.close();
-                } else {
-                  $listContainer.style.height = '0';
-                };
-
+                close();
               } else {
-                $selectContainer.classList.add('open');
-                $listContainer.setAttribute('tabindex', '0');
-
-                let windowHeight = window.innerHeight;
-                let scrollPosition = window.scrollY;
-                let btnPosition = window.scrollY + event.target.getBoundingClientRect().top + event.target.offsetHeight;
-                if (windowHeight - btnPosition + scrollPosition < dropupThreshold) {
-                  event.target.parentNode.classList.add('dropup');
-                  event.target.nextSibling.style.bottom = `${event.target.offsetHeight}px`;
-                }
-
-                if (selectEl.querySelector('.naked-submit')) selectEl.querySelector('.naked-submit').setAttribute('tabindex', '0');
-
-                // optional callback
-                if (typeof events.open === 'function' && events.open) {
-                  events.open();
-                } else {
-                  $listContainer.style.height = null;
-                };
+                open();
               }
-            })
-            selectEl.setAttribute('data-initialized', 'true');
-          }, interactive.globalClose())
-        }
+            }
+
+          })
+          selectEl.setAttribute('data-initialized', 'true');
+        }, interactive.globalClose())
       })
     },
     addValidationMessage: (select) => {
@@ -449,12 +479,22 @@
 
             if ($selectContainer.classList.contains('open')) {
               $selectContainer.classList.remove('open');
-              $listContainer.style.height = '0';
               $listContainer.setAttribute('tabindex', '-1');
+              // optional callback
+              if (typeof events.close === 'function' && events.close) {
+                  events.close($listContainer);
+              } else {
+                  $listContainer.style.height = '0';
+              };
             } else {
               $selectContainer.classList.add('open');
-              $listContainer.style.height = null;
               $listContainer.setAttribute('tabindex', '0');
+              // optional callback
+              if (typeof events.open === 'function' && events.open) {
+                  events.open($listContainer);
+              } else {
+                  $listContainer.style.height = null;
+              };
             }
 
             // toggle selected class
@@ -549,7 +589,8 @@
 
   build.lists();
   build.currentState();
-  interactive.toggle();
+  interactive.toggle('keydown');
+  interactive.toggle('click');
   interactive.select();
   interactive.keywordSearch();
 
