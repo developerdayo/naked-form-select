@@ -1,4 +1,4 @@
-/* Naked Form Select v1.2.0 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.2.1 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
  const nakedFormSelect = (target = 'select', {
@@ -31,6 +31,12 @@
   let $targetSelector;
   let targetSelectorID;
   let dropupThreshold = settings.dropupThreshold;
+
+  const DOWN_ARROW_KEY_CODE = 40;
+  const SPACEBAR_KEY_CODE = [0, 32];
+  const ENTER_KEY_CODE = 13;
+  const UP_ARROW_KEY_CODE = 38;
+  const ESCAPE_KEY_CODE = 27;
 
   const build = {
     index: () => {
@@ -332,12 +338,6 @@
 
             if (eventType === 'keydown') {
 
-              const DOWN_ARROW_KEY_CODE = 40;
-              const SPACEBAR_KEY_CODE = [0, 32];
-              const ENTER_KEY_CODE = 13;
-              const UP_ARROW_KEY_CODE = 38;
-              const ESCAPE_KEY_CODE = 27;
-
               if (event.keyCode === SPACEBAR_KEY_CODE) {
 
                 open();
@@ -410,109 +410,120 @@
 
         listItem.addEventListener('click', () => {
 
+          selectOption(listItem);
 
-          let listItemIndex = parseInt(listItem.getAttribute('data-index'));
-          let listItemValue = listItem.textContent;
-          let selectContainerIndex = listItem.parentNode.getAttribute('data-naked-select-list');
-          let $select = $source.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] select`);
+        })
 
-          // update the select value
-          $select.options[listItemIndex].selected = true;
+        listItem.addEventListener('keydown', event => {
 
-          interactive.triggerEvent($select, 'change');
-
-          let $placeholderContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] .toggle-dropdown`);
-
-          // handle multiple select
-          if ($select.multiple) {
-
-            // toggle selected class
-            if (listItem.classList.contains('selected')) {
-              listItem.classList.remove('selected');
-              $select.options[listItemIndex].selected = false;
-            } else {
-              listItem.classList.add('selected');
-              $select.options[listItemIndex].selected = true;
-            }
-
-            // update placeholder text
-            let selectedOptionsArr = Array.from($select.options).filter(option => option.selected === true);
-
-            if ($select.getAttribute('data-label') === 'true') {
-              selectedOptionsArr = selectedOptionsArr.filter(option => option.index !== 0);
-            }
-
-            if (selectedOptionsArr.length > 1) {
-
-              selectedOptionsArr.forEach((option) => {
-                // if data-label is being utilized, lets make sure we adjust the index for that scenario
-                if ($select.getAttribute('data-label') !== 'true' || option.index !== 0) {
-                  $select.previousElementSibling.querySelector(`li[data-index="${option.index}"]`).classList.add('selected');
-                }
-              });
-
-              let keyword;
-
-              if ($select.getAttribute('data-multiple-keyword') !== null && $select.getAttribute('data-pluralize') === 'false') {
-                keyword = $select.getAttribute('data-multiple-keyword');
-              } else if ($select.getAttribute('data-multiple-keyword') !== null) {
-                keyword = `${$select.getAttribute('data-multiple-keyword')}s`;
-              } else {
-                keyword = 'items';
-              }
-
-              $placeholderContainer.textContent = `${selectedOptionsArr.length} ${keyword} selected`;
-            } else if (selectedOptionsArr.length === 1) {
-              $placeholderContainer.textContent = selectedOptionsArr[0].text;
-            }
-
-            // if there is nothing selected, set it to the first option
-            if (selectedOptionsArr.length === 0) {
-              $placeholderContainer.textContent = $select.options[0].textContent;
-            }
-
-          } else {
-
-            // handle single select
-            let $selectContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}']`);
-            let $listContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] .options-wrap`);
-
-            if ($selectContainer.classList.contains('open')) {
-              $selectContainer.classList.remove('open');
-              $listContainer.setAttribute('tabindex', '-1');
-              // optional callback
-              if (typeof events.close === 'function' && events.close) {
-                  events.close($listContainer);
-              } else {
-                  $listContainer.style.height = '0';
-              };
-            } else {
-              $selectContainer.classList.add('open');
-              $listContainer.setAttribute('tabindex', '0');
-              // optional callback
-              if (typeof events.open === 'function' && events.open) {
-                  events.open($listContainer);
-              } else {
-                  $listContainer.style.height = null;
-              };
-            }
-
-            // toggle selected class
-            [...$source.querySelectorAll(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] li`)].forEach((li) => {
-              li.classList.remove('selected')
-            });
-            listItem.classList.contains('selected') ? listItem.classList.remove('selected') : listItem.classList.add('selected');
-
-            // update the placeholder text
-            $placeholderContainer.textContent = listItemValue;
-          }
-
-          if ($select.getAttribute('required')) {
-            if ($select.selectedIndex !== 0)
-              interactive.removeValidationMessage($source.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}']`));
+          if (event.keyCode === ENTER_KEY_CODE) {
+            selectOption(listItem);
           }
         })
       })
+
+      const selectOption = listItem => {
+        let listItemIndex = parseInt(listItem.getAttribute('data-index'));
+        let listItemValue = listItem.textContent;
+        let selectContainerIndex = listItem.parentNode.getAttribute('data-naked-select-list');
+        let $select = $source.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] select`);
+
+        // update the select value
+        $select.options[listItemIndex].selected = true;
+
+        interactive.triggerEvent($select, 'change');
+
+        let $placeholderContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] .toggle-dropdown`);
+
+        // handle multiple select
+        if ($select.multiple) {
+
+          // toggle selected class
+          if (listItem.classList.contains('selected')) {
+            listItem.classList.remove('selected');
+            $select.options[listItemIndex].selected = false;
+          } else {
+            listItem.classList.add('selected');
+            $select.options[listItemIndex].selected = true;
+          }
+
+          // update placeholder text
+          let selectedOptionsArr = Array.from($select.options).filter(option => option.selected === true);
+
+          if ($select.getAttribute('data-label') === 'true') {
+            selectedOptionsArr = selectedOptionsArr.filter(option => option.index !== 0);
+          }
+
+          if (selectedOptionsArr.length > 1) {
+
+            selectedOptionsArr.forEach((option) => {
+              // if data-label is being utilized, lets make sure we adjust the index for that scenario
+              if ($select.getAttribute('data-label') !== 'true' || option.index !== 0) {
+                $select.previousElementSibling.querySelector(`li[data-index="${option.index}"]`).classList.add('selected');
+              }
+            });
+
+            let keyword;
+
+            if ($select.getAttribute('data-multiple-keyword') !== null && $select.getAttribute('data-pluralize') === 'false') {
+              keyword = $select.getAttribute('data-multiple-keyword');
+            } else if ($select.getAttribute('data-multiple-keyword') !== null) {
+              keyword = `${$select.getAttribute('data-multiple-keyword')}s`;
+            } else {
+              keyword = 'items';
+            }
+
+            $placeholderContainer.textContent = `${selectedOptionsArr.length} ${keyword} selected`;
+          } else if (selectedOptionsArr.length === 1) {
+            $placeholderContainer.textContent = selectedOptionsArr[0].text;
+          }
+
+          // if there is nothing selected, set it to the first option
+          if (selectedOptionsArr.length === 0) {
+            $placeholderContainer.textContent = $select.options[0].textContent;
+          }
+
+        } else {
+
+          // handle single select
+          let $selectContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}']`);
+          let $listContainer = $source.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] .options-wrap`);
+
+          if ($selectContainer.classList.contains('open')) {
+            $selectContainer.classList.remove('open');
+            $listContainer.setAttribute('tabindex', '-1');
+            // optional callback
+            if (typeof events.close === 'function' && events.close) {
+                events.close($listContainer);
+            } else {
+                $listContainer.style.height = '0';
+            };
+          } else {
+            $selectContainer.classList.add('open');
+            $listContainer.setAttribute('tabindex', '0');
+            // optional callback
+            if (typeof events.open === 'function' && events.open) {
+                events.open($listContainer);
+            } else {
+                $listContainer.style.height = null;
+            };
+          }
+
+          // toggle selected class
+          [...$source.querySelectorAll(`${targetSelectorID}[data-naked-select='${selectContainerIndex}'] li`)].forEach((li) => {
+            li.classList.remove('selected')
+          });
+          listItem.classList.contains('selected') ? listItem.classList.remove('selected') : listItem.classList.add('selected');
+
+          // update the placeholder text
+          $placeholderContainer.textContent = listItemValue;
+        }
+
+        if ($select.getAttribute('required')) {
+          if ($select.selectedIndex !== 0)
+            interactive.removeValidationMessage($source.querySelector(`${targetSelectorID}[data-naked-select='${selectContainerIndex}']`));
+        }
+      }
     },
     keywordSearch: () => {
       if (keywordSearch.on === true) {
