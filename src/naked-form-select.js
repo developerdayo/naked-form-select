@@ -1,4 +1,4 @@
-/* Naked Form Select v1.2.1 (https://github.com/developerdayo/naked-form-select)
+/* Naked Form Select v1.2.2 (https://github.com/developerdayo/naked-form-select)
  * Copyright 2019-2020 Sarah Ferguson
  * Licensed under MIT (https://github.com/developerdayo/naked-form-select/LICENSE) */
  const nakedFormSelect = (target = 'select', {
@@ -261,10 +261,11 @@
     },
     globalClose: () => {
       // close all dropdowns when clicked outside of select
-      document.querySelector('body').addEventListener('click', (e) => {
+
+      const close = e => {
+        let selectArr = [...document.querySelectorAll('[data-naked-select]')].filter(item => !item.contains(e.target));
 
         if (!events.close) {
-          let selectArr = [...document.querySelectorAll('[data-naked-select]')].filter(item => !item.contains(e.target));
           selectArr.forEach(select => {
   
               select.classList.remove('open');
@@ -279,7 +280,17 @@
   
               dropdown.style.height = '0';
           })
+        } else {
+            events.close();
         }
+      }
+
+      document.querySelector('body').addEventListener('click', e => {
+        close(e);
+      })
+
+      document.querySelector('body').addEventListener('keydown', e => {
+        if (e.keyCode === ESCAPE_KEY_CODE) close(e);
       })
     },
     toggle: eventType => {
