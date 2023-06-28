@@ -1,3 +1,4 @@
+![](https://github.com/developerdayo/naked-form-select/blob/629d9706a5fe1f0e59b343ae50b2a6b5babd79b9/banner.png)
 # Naked Form Select
 Use this package to style form selects that adds minimal markup and requires minimal css. Naked Form Select supports single and multi-select as well as has an option to turn on keyword search. It is written in Javascript and requires no other dependencies.
 
